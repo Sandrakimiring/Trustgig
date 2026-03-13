@@ -13,3 +13,10 @@ ipykernel
 # Utilities
 python-dotenv
 click
+fastapi
+psycopg2-binary 
+sqlalchemy 
+fastapi 
+uvicorn
+asyncpg
+
