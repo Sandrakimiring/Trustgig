@@ -13,3 +13,13 @@ ipykernel
 # Utilities
 python-dotenv
 click
+
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+africastalking
+python-dotenv
+requests
+certifi
+ 
