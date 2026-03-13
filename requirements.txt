@@ -1,0 +1,15 @@
+# Core scientific stack
+numpy
+pandas
+scikit-learn
+
+# Visualization
+matplotlib
+seaborn
+
+# Jupyter
+ipykernel
+
+# Utilities
+python-dotenv
+click

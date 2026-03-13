@@ -1,0 +1,6 @@
+site_name: Trustgig
+theme:
+  name: material
+
+nav:
+  - Home: index.md
