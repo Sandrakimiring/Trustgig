@@ -1,22 +1,23 @@
-# Core scientific stack
+# Web framework
+fastapi
+uvicorn
+
+# Database
+sqlalchemy
+psycopg2-binary
+
+# ML/Matching
 numpy
 pandas
 scikit-learn
 
-# Visualization
-matplotlib
-seaborn
-
-# Jupyter
-ipykernel
+# SMS (Africa's Talking)
+requests
+certifi
 
 # Utilities
 python-dotenv
 click
 fastapi
-psycopg2-binary 
-sqlalchemy 
-fastapi 
-uvicorn
 asyncpg
 
