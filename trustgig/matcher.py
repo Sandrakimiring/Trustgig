@@ -1,8 +1,8 @@
 # matching engine 
 from sqlalchemy.orm import Session
-from models import User, Job, Match
-from vectorizer import compute_similarity
-from scorer import compute_reliability, compute_final_score
+from trustgig.models import User, Job, Match
+from trustgig.vectorizer import compute_similarity
+from trustgig.scorer import compute_reliability, compute_final_score
 from datetime import datetime, timezone
 
 def get_top_matches (job_id: int, job_skills: list, db: Session, top_n: int = 3) -> list: #finds the best freelancers for a specific job

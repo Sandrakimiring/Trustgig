@@ -1,10 +1,6 @@
-"""
-seed_data.py — Run once to populate the database with dummy freelancers,
-clients, and sample jobs for Engineer B's matching engine.
-
-Usage:
-    python seed_data.py
-"""
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from app.database import SessionLocal, engine, Base
 from app.models import User, Job
@@ -25,31 +21,38 @@ FREELANCERS = [
 ]
 
 CLIENTS = [
-    {"name": "TechStartup KE",  "phone": "+254700000001", "role": "client", "location": "Nairobi"},
-    {"name": "AgriData Ltd",    "phone": "+254700000002", "role": "client", "location": "Nakuru"},
+    {"name": "TechStartup KE", "phone": "+254700000001", "role": "client", "location": "Nairobi"},
+    {"name": "AgriData Ltd",   "phone": "+254700000002", "role": "client", "location": "Nakuru"},
 ]
 
 SAMPLE_JOBS = [
     {
-        "client_index": 0,    # TechStartup KE
+        "client_index": 0,
         "title": "Python data cleaning script",
-        "description": "Clean and normalize a 10,000-row survey dataset. Remove duplicates, fix formatting, export to CSV.",
+        "description": "Clean and normalize a 10,000-row survey dataset.",
         "skills_required": "python,pandas,data analysis",
         "budget": 4000.0,
     },
     {
-        "client_index": 1,    # AgriData Ltd
+        "client_index": 1,
         "title": "React dashboard for farm analytics",
-        "description": "Build a simple React dashboard showing crop yield charts. Data provided via REST API.",
-        "skills_required": "react,javascript,charts",
+        "description": "Build a React dashboard showing crop yield charts.",
+        "skills_required": "react,javascript",
         "budget": 15000.0,
     },
     {
         "client_index": 0,
         "title": "Logo and branding package",
-        "description": "Design a logo, business card, and letterhead for a new fintech brand.",
+        "description": "Design a logo, business card, and letterhead.",
         "skills_required": "figma,branding,design",
         "budget": 8000.0,
+    },
+    {
+        "client_index": 1,
+        "title": "Mobile app for crop disease detection",
+        "description": "Flutter app that detects crop diseases from photos.",
+        "skills_required": "flutter,dart,machine learning",
+        "budget": 25000.0,
     },
 ]
 
@@ -57,28 +60,24 @@ SAMPLE_JOBS = [
 def seed():
     db = SessionLocal()
     try:
-        # Skip if data already exists
         if db.query(User).count() > 0:
             print("⚠️  Database already has data. Skipping seed.")
             return
 
-        # Insert freelancers
         freelancer_objs = []
         for f in FREELANCERS:
             user = User(**f)
             db.add(user)
             freelancer_objs.append(user)
 
-        # Insert clients
         client_objs = []
         for c in CLIENTS:
             user = User(**c)
             db.add(user)
             client_objs.append(user)
 
-        db.flush()  # Get IDs without committing
+        db.flush()
 
-        # Insert sample jobs
         for j in SAMPLE_JOBS:
             idx = j.pop("client_index")
             job = Job(client_id=client_objs[idx].id, **j)
@@ -86,13 +85,11 @@ def seed():
 
         db.commit()
         print(f"✅ Seeded {len(FREELANCERS)} freelancers, {len(CLIENTS)} clients, {len(SAMPLE_JOBS)} jobs.")
-        print("\nFreelancers:")
-        for f in FREELANCERS:
-            print(f"  • {f['name']} ({f['location']}) — {f['skills']}")
 
     except Exception as e:
         db.rollback()
         print(f"❌ Seed failed: {e}")
+        raise
     finally:
         db.close()
 

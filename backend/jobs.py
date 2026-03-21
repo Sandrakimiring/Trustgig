@@ -47,8 +47,7 @@ async def create_job(
         raise HTTPException(status_code=400, detail="Only clients can post jobs")
 
     db_job = crud.create_job(db, job)
-
-    # Fire matching in the background — don't make the client wait
+  # Fire matching in the background — don't make the client wait
     background_tasks.add_task(
         _run_matching, db_job.id, db_job.skills_required or "", db
     )

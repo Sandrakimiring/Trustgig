@@ -1,6 +1,7 @@
 # Web framework
 fastapi
 uvicorn
+httpx
 
 # Database
 sqlalchemy
@@ -14,10 +15,12 @@ scikit-learn
 # SMS (Africa's Talking)
 requests
 certifi
+africastalking
 
 # Utilities
 python-dotenv
 click
-fastapi
 asyncpg
+httpx
+africastalking
 

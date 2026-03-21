@@ -2,11 +2,11 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 
-from database import get_db, engine, Base
-from models import User, Job, Match, MatchRequest, MatchResult
-from matcher import get_top_matches, save_matches_to_db
-from notifier import send_match_sms
-import models 
+from trustgig.database import get_db, engine, Base
+from trustgig.models import User, Job, Match, MatchRequest, MatchResult
+from trustgig.matcher import get_top_matches, save_matches_to_db
+from trustgig.notifier import send_match_sms
+from trustgig import models 
 Base.metadata.create_all(bind=engine)
 
 from fastapi import FastAPI, Depends, HTTPException
