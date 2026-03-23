@@ -2,8 +2,9 @@ from sqlalchemy import Column, Integer, String, Float, Numeric, DateTime, Foreig
 from sqlalchemy.sql import func
 from pydantic import BaseModel
 from typing import Optional, List
-from database import Base
 from datetime import datetime
+
+from trustgig.database import Base
 
 class User(Base):
     __tablename__ = "users"

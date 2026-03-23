@@ -112,3 +112,29 @@ DATABASE_URL=postgresql://...
 AT_USERNAME=sandbox
 AT_API_KEY=your_key
 ```
+
+Frontend
+   │
+   ▼
+FastAPI Route
+   │
+   ├─> schemas.py   (validate input/output)
+   │
+   ├─> crud.py      (write job to DB)
+   │       │
+   │       ▼
+   │     models.py  (jobs table)
+   │
+   └─> matcher.py   (compute top freelancers)
+           │
+           ▼
+   crud.save_matches(db) -> models.Match (store match scores)
+           │
+           ▼
+send_match_sms -> Africa's Talking SMS API
+           │
+           ▼
+crud.mark_match_notified(db) -> update notified flag
+           │
+           ▼
+Frontend sees top matches & notifications
