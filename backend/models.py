@@ -101,3 +101,13 @@ class Match(Base):
 
     job = relationship("Job", back_populates="matches")
     freelancer = relationship("User", back_populates="matches")
+
+    class Delivery(Base):
+    __tablename__ = "deliveries"
+    id            = Column(Integer, primary_key=True)
+    job_id        = Column(Integer)
+    freelancer_id = Column(Integer)
+    delivery_link = Column(String)
+    message       = Column(String)
+    status        = Column(String, default="pending")  # pending | approved | rejected
+    delivered_at  = Column(DateTime, default=func.now())
