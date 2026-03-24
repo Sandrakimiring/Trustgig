@@ -16,18 +16,31 @@ def send_sms(phone: str, message: str) -> bool:
         print(f"📱 [SMS MOCK] → {phone}: {message}")
         return False
     try:
-        africastalking.initialize(AT_USERNAME, AT_API_KEY)
-        sms = africastalking.SMS
+        import requests
+        import urllib3
         
-        # Include sender ID to brand texts if provided AND we are NOT in the sandbox.
-        # Sandbox rejects custom Sender IDs unless explicitly registered.
-        kwargs = {}
-        if AT_SENDER_ID and AT_USERNAME != "sandbox":
-            kwargs["sender_id"] = AT_SENDER_ID
+        url = "https://api.sandbox.africastalking.com/version1/messaging" if AT_USERNAME == "sandbox" else "https://api.africastalking.com/version1/messaging"
+        headers = {
+            "apiKey": AT_API_KEY,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json"
+        }
+        data = {
+            "username": AT_USERNAME,
+            "to": phone,
+            "message": message
+        }
+        
+        verify_ssl = True
+        if AT_USERNAME == "sandbox":
+            verify_ssl = False
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        elif AT_SENDER_ID:
+            data["from"] = AT_SENDER_ID
             
-        response = sms.send(message, [phone], **kwargs)
-        print(f"[SMS] → {phone} | {response}")
-        return True
+        response = requests.post(url, headers=headers, data=data, verify=verify_ssl, timeout=15)
+        print(f"[SMS] → {phone} | {response.status_code} | {response.text}")
+        return response.status_code == 201
     except Exception as e:
         print(f"[SMS ERROR] {e}")
         return False
