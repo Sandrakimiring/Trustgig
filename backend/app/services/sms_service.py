@@ -8,8 +8,8 @@ logger = logging.getLogger(__name__)
 
 AT_USERNAME = os.getenv("AT_USERNAME", "sandbox")
 AT_API_KEY  = os.getenv("AT_API_KEY", "")
+AT_SENDER_ID = os.getenv("AT_SENDER_ID", "")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8000")
-
 
 def send_sms(phone: str, message: str) -> bool:
     if not AT_API_KEY:
@@ -18,7 +18,13 @@ def send_sms(phone: str, message: str) -> bool:
     try:
         africastalking.initialize(AT_USERNAME, AT_API_KEY)
         sms = africastalking.SMS
-        response = sms.send(message, [phone])
+        
+        # Include sender ID to brand texts (or bypass default shortcode) if provided
+        kwargs = {}
+        if AT_SENDER_ID:
+            kwargs["sender_id"] = AT_SENDER_ID
+            
+        response = sms.send(message, [phone], **kwargs)
         print(f"[SMS] → {phone} | {response}")
         return True
     except Exception as e:
