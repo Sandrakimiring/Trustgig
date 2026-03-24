@@ -262,7 +262,7 @@ tr:hover td { background:#3d152844; }
 </div>
 
 <script>
-const API = "http://localhost:8000";
+const API = "https://trustgig-backend.onrender.com";
 let currentUser = null;
 
 async function apiCall(method, path, body=null) {
@@ -462,7 +462,10 @@ async function loadJobMatches(jobId) {
           </div>
           <div class="match-score-text">${(m.score*100).toFixed(0)}%</div>
         </div>`).join('');
-  } catch(e) { el.innerHTML='<p style="font-size:13px;color:#c084a0">No matches yet</p>'; }
+  } catch(e) { 
+    // A 404 means no matches exist in the DB yet, which is normal for new jobs
+    el.innerHTML='<p style="font-size:13px;color:#c084a0;margin-top:10px">No matches found yet. Waiting for AI... 🌸</p>'; 
+  }
 }
 
 async function loadDeliveryForClient(jobId) {
