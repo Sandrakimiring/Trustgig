@@ -19,9 +19,10 @@ def send_sms(phone: str, message: str) -> bool:
         africastalking.initialize(AT_USERNAME, AT_API_KEY)
         sms = africastalking.SMS
         
-        # Include sender ID to brand texts (or bypass default shortcode) if provided
+        # Include sender ID to brand texts if provided AND we are NOT in the sandbox.
+        # Sandbox rejects custom Sender IDs unless explicitly registered.
         kwargs = {}
-        if AT_SENDER_ID:
+        if AT_SENDER_ID and AT_USERNAME != "sandbox":
             kwargs["sender_id"] = AT_SENDER_ID
             
         response = sms.send(message, [phone], **kwargs)
