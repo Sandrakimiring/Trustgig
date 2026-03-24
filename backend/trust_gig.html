@@ -630,6 +630,17 @@ async function loadMyMatches() {
   } catch(e) { el.innerHTML=`<div class="empty">❌ ${e.message}</div>`; }
 }
 
+async function applyToJobById(jobId) {
+  if (!confirm(`Apply for Job #${jobId}?`)) return;
+  try {
+    const data = await apiCall('POST', `/jobs/${jobId}/apply`, { freelancer_id: currentUser.id });
+    alert(`✅ Applied successfully! Match score: ${data.match_score}. Client notified!`);
+    loadMyMatches(); 
+  } catch(e) {
+    alert(`❌ Failed to apply: ${e.message}`);
+  }
+}
+
 function deliverForm(jobId) {
   return `
     <div class="form-group" style="margin-top:10px">
