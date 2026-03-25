@@ -269,7 +269,8 @@ tr:hover td { background:#3d152844; }
 </div>
 
 <script>
-const API = "http://localhost:8000";
+// ← UPDATE THIS to your Render backend URL if different
+const API = "https://trustgig-backend.onrender.com";
 let currentUser = null;
 
 async function apiCall(method, path, body=null) {
@@ -827,8 +828,12 @@ function filterFreelancers() {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-const saved = localStorage.getItem('trustgig_user');
-if (saved) { currentUser=JSON.parse(saved); initApp(); }
+try {
+  const saved = localStorage.getItem('trustgig_user');
+  if (saved) { currentUser = JSON.parse(saved); initApp(); }
+} catch(e) {
+  localStorage.removeItem('trustgig_user');
+}
 </script>
 </body>
 </html>
