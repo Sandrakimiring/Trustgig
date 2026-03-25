@@ -25,6 +25,9 @@ class User(Base):
     skills = Column(String(500), nullable=True)         # comma-separated
     experience = Column(String(500), nullable=True)
     location = Column(String(100), nullable=True)
+    jobs_completed = Column(Integer, default=0)
+    jobs_applied = Column(Integer, default=0)
+    last_completed = Column(DateTime, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     jobs_posted = relationship("Job", back_populates="client")
