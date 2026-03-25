@@ -8,19 +8,39 @@ logger = logging.getLogger(__name__)
 
 AT_USERNAME = os.getenv("AT_USERNAME", "sandbox")
 AT_API_KEY  = os.getenv("AT_API_KEY", "")
+AT_SENDER_ID = os.getenv("AT_SENDER_ID", "")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8000")
-
 
 def send_sms(phone: str, message: str) -> bool:
     if not AT_API_KEY:
         print(f"📱 [SMS MOCK] → {phone}: {message}")
         return False
     try:
-        africastalking.initialize(AT_USERNAME, AT_API_KEY)
-        sms = africastalking.SMS
-        response = sms.send(message, [phone])
-        print(f"[SMS] → {phone} | {response}")
-        return True
+        import requests
+        import urllib3
+        
+        url = "https://api.sandbox.africastalking.com/version1/messaging" if AT_USERNAME == "sandbox" else "https://api.africastalking.com/version1/messaging"
+        headers = {
+            "apiKey": AT_API_KEY,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json"
+        }
+        data = {
+            "username": AT_USERNAME,
+            "to": phone,
+            "message": message
+        }
+        
+        verify_ssl = True
+        if AT_USERNAME == "sandbox":
+            verify_ssl = False
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        elif AT_SENDER_ID:
+            data["from"] = AT_SENDER_ID
+            
+        response = requests.post(url, headers=headers, data=data, verify=verify_ssl, timeout=15)
+        print(f"[SMS] → {phone} | {response.status_code} | {response.text}")
+        return response.status_code == 201
     except Exception as e:
         print(f"[SMS ERROR] {e}")
         return False

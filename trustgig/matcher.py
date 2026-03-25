@@ -62,8 +62,17 @@ def get_top_matches (job_id: int, job_skills: list, db: Session, top_n: int = 3)
  
  
 def save_matches_to_db(job_id: int, matches: list, db: Session):
-    
+    saved = 0
     for match in matches:
+        # skip if this freelancer is already matched to this job
+        existing = db.query(Match).filter(
+            Match.job_id == job_id,
+            Match.freelancer_id == match["freelancer_id"]
+        ).first()
+        if existing:
+            print(f"[Matcher] Skipping duplicate match: job_id={job_id} freelancer_id={match['freelancer_id']}")
+            continue
+
         db_match = Match(
             job_id=job_id,
             freelancer_id=match["freelancer_id"],
@@ -72,6 +81,7 @@ def save_matches_to_db(job_id: int, matches: list, db: Session):
             sms_sent=match.get("sms_sent", False),
         )
         db.add(db_match)
- 
+        saved += 1
+
     db.commit()
-    print(f"[Matcher] Saved {len(matches)} matches to DB for job_id={job_id}")
+    print(f"[Matcher] Saved {saved} new matches to DB for job_id={job_id}")

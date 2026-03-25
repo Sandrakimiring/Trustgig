@@ -5,7 +5,6 @@ sys.path.insert(0, os.path.dirname(__file__))
 from trustgig.database import get_db, engine, Base
 from trustgig.models import User, Job, Match, MatchRequest, MatchResult
 from trustgig.matcher import get_top_matches, save_matches_to_db
-from trustgig.notifier import send_match_sms
 from trustgig import models 
 Base.metadata.create_all(bind=engine)
 
@@ -68,19 +67,9 @@ def match_job(request: MatchRequest, db: Session = Depends(get_db)):
         print("[API] No matches found — returning empty list")
         return []
 
-    #fire SMS to each matched freelancer
-    print(f"[API] Firing SMS to {len(top_matches)} freelancers...")
+    # SMS is now handled by the Main Web Service to avoid duplicates
     for match in top_matches:
-        sms_result = send_match_sms(
-            phone=match["phone"],
-            job_title=job_title,
-            budget=request.budget,
-            score=match["final_score"]
-        )
-        match["sms_sent"] = sms_result
-        status = "sent" if sms_result else "FAILED"
-        print(f"[API] SMS {status} → {match['name']} ({match['phone']})")
-
+        match["sms_sent"] = False
     # save to DB
     try:
         save_matches_to_db(request.job_id, top_matches, db)
