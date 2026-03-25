@@ -873,20 +873,21 @@ function deliverForm(jobId) {
   return `
     <div class="form-group" style="margin-top:10px">
       <label>Work Link (Google Drive, GitHub, Figma, etc)</label>
-      <input type="text" id="deliver-link-${jobId}" placeholder="https://drive.google.com/...">
+      <input type="text" class="deliver-link" placeholder="https://drive.google.com/...">
     </div>
     <div class="form-group">
       <label>Message to Client</label>
-      <textarea id="deliver-msg-${jobId}" placeholder="Describe what you completed..." style="min-height:60px"></textarea>
+      <textarea class="deliver-msg" placeholder="Describe what you completed..." style="min-height:60px"></textarea>
     </div>
-    <button class="btn btn-secondary btn-sm" id="deliver-btn-${jobId}" onclick="deliverWork(${jobId})">📤 Submit Work</button>`;
+    <button class="btn btn-secondary btn-sm" onclick="deliverWork(${jobId}, this)">📤 Submit Work</button>`;
 }
 
-// ✅ Fix: clear error feedback, loading state, proper element lookup
-async function deliverWork(job_id) {
-  const linkEl = document.getElementById(`deliver-link-${job_id}`);
-  const msgEl  = document.getElementById(`deliver-msg-${job_id}`);
-  const btn    = document.getElementById(`deliver-btn-${job_id}`);
+// ✅ Fix: clear error feedback, loading state, proper element lookup scoped to button click
+async function deliverWork(job_id, btnEl) {
+  const box = btnEl.closest('.delivery-box');
+  const linkEl = box ? box.querySelector('.deliver-link') : null;
+  const msgEl  = box ? box.querySelector('.deliver-msg') : null;
+  const btn    = btnEl;
 
   if (!linkEl || !msgEl) {
     alert('❌ Form not found. Please refresh the page and try again.');
