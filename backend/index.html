@@ -841,8 +841,12 @@ function filterFreelancers() {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-const saved = localStorage.getItem('trustgig_user');
-if (saved) { currentUser=JSON.parse(saved); initApp(); }
+try {
+  const saved = localStorage.getItem('trustgig_user');
+  if (saved) { currentUser = JSON.parse(saved); initApp(); }
+} catch(e) {
+  localStorage.removeItem('trustgig_user');
+}
 </script>
 </body>
 </html>
