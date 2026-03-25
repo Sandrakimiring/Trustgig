@@ -438,8 +438,11 @@ def deliver_work(job_id: int, payload: WorkDelivery, db: Session = Depends(get_d
     job = db.query(Job).filter(Job.id == job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-    if job.status != "in_progress":
-        raise HTTPException(status_code=400, detail="Job must be in_progress before delivering")
+    if job.status == "completed":
+
+        raise HTTPException(status_code=400, detail="Job is already completed")
+    if job.status == "open":
+        raise HTTPException(status_code=400, detail="Client must fund escrow before you can deliver work")
 
     freelancer = db.query(User).filter(User.id == payload.freelancer_id).first()
     if not freelancer:

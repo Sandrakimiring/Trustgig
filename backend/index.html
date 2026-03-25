@@ -52,7 +52,7 @@ select option { background:#2d1020; }
 .btn-danger { background:#450a0a; color:#f87171; border:1px solid #dc2626; }
 .btn-danger:hover { background:#7f1d1d; }
 .btn-sm { padding:5px 14px; font-size:12px; border-radius:6px; }
-.btn:disabled { opacity:0.5; cursor:not-allowed; }
+.btn:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
 .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
 @media(max-width:700px) { .stats { grid-template-columns:repeat(2,1fr); } }
 .stat { background:linear-gradient(135deg,#2d1020,#3d1528); border:1px solid #6b2d4a; border-radius:12px; padding:20px; text-align:center; }
@@ -99,7 +99,7 @@ tr:hover td { background:#3d152844; }
 .welcome-text h2 { margin-bottom:4px; }
 .welcome-text p { color:#ef1078; font-size:14px; }
 .role-badge { padding:6px 16px; border-radius:20px; font-size:13px; font-weight:600; }
-.role-client { background:#e8d6e5; color:#f9a8d4; }
+.role-client { background:#e8d6e5; color:#8b1a4a; }
 .role-freelancer { background:#1e1a4a; color:#c4b5fd; }
 .delivery-box { margin-top:16px; padding:16px; background:#1a0a14; border-radius:10px; border:1px solid #6b2d4a; }
 .delivery-box h4 { color:#f9a8d4; margin-bottom:8px; font-size:14px; }
@@ -143,7 +143,13 @@ tr:hover td { background:#3d152844; }
         </div>
         <div id="signup-freelancer-fields" style="display:none">
           <div class="form-group"><label>Your Skills (comma-separated)</label><input type="text" id="signup-skills" placeholder="figma,ui ux,design"></div>
-          <div class="form-group"><label>Experience Level</label><select id="signup-experience"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="expert">Expert</option></select></div>
+          <div class="form-group"><label>Experience Level</label>
+            <select id="signup-experience">
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="expert">Expert</option>
+            </select>
+          </div>
         </div>
         <div class="form-group"><label>Location</label><input type="text" id="signup-location" placeholder="Nairobi" autocomplete="address-level2"></div>
         <button class="btn btn-primary" onclick="signup()">Create Account ✨</button>
@@ -164,7 +170,7 @@ tr:hover td { background:#3d152844; }
     </div>
   </nav>
 
-  <!-- OVERVIEW (shared) -->
+  <!-- OVERVIEW -->
   <div id="page-overview" class="page">
     <div class="welcome-banner">
       <div class="welcome-text"><h2 id="welcome-msg">Welcome back! 💕</h2><p id="welcome-sub">Here's what's happening</p></div>
@@ -188,7 +194,7 @@ tr:hover td { background:#3d152844; }
   <!-- CLIENT: MY JOBS -->
   <div id="page-myjobs" class="page">
     <h1>💼 My Jobs</h1>
-    <p class="subtitle">Your posted jobs, matches, and work deliveries</p>
+    <p class="subtitle">Your posted jobs, applicants, and work deliveries</p>
     <div id="my-jobs-list"><div class="empty"><span class="spinner"></span>Loading...</div></div>
   </div>
 
@@ -202,7 +208,7 @@ tr:hover td { background:#3d152844; }
       <div class="form-group"><label>Description</label><textarea id="job-description" placeholder="Describe the job in detail..."></textarea></div>
       <div class="form-group"><label>Skills Required (comma-separated)</label><input type="text" id="job-skills" placeholder="figma,ui ux,design"></div>
       <div class="form-group"><label>Budget (KES)</label><input type="number" id="job-budget" placeholder="e.g. 8000"></div>
-      <button class="btn btn-primary" onclick="createJob()">🚀 Post Job + Trigger AI Matching</button>
+      <button class="btn btn-primary" id="post-job-btn" onclick="createJob()">🚀 Post Job + Trigger AI Matching</button>
       <p class="hint">⚡ Matched freelancers get SMS with job link automatically</p>
     </div>
   </div>
@@ -213,7 +219,7 @@ tr:hover td { background:#3d152844; }
     <p class="subtitle">Fund jobs and release payments to freelancers via M-Pesa</p>
     <div class="card-grid">
       <div class="card">
-      <h2>💰 Fund Escrow</h2>
+        <h2>💰 Fund Escrow</h2>
         <div id="alert-fund" class="alert"></div>
         <div class="form-group"><label>Select Job</label><select id="fund-job-id" onchange="loadApplicantsForFund()"></select></div>
         <div class="form-group">
@@ -222,14 +228,14 @@ tr:hover td { background:#3d152844; }
         </div>
         <div class="form-group"><label>Amount (KES)</label><input type="number" id="fund-amount" placeholder="e.g. 8000"></div>
         <button class="btn btn-secondary" onclick="fundEscrow()">💰 Fund Escrow</button>
-        <p class="hint">📱 Hired freelancer gets SMS to start work</p>
+        <p class="hint">📱 Hired freelancer gets SMS to start work. Client gets confirmation.</p>
       </div>
       <div class="card">
         <h2>🚀 Release Payment</h2>
         <div id="alert-release" class="alert"></div>
         <div class="form-group"><label>Select Job</label><select id="release-job-id"></select></div>
         <button class="btn btn-warning" onclick="releasePayment()">🚀 Release to M-Pesa</button>
-        <p class="hint">💸 Freelancer receives M-Pesa + SMS</p>
+        <p class="hint">💸 Freelancer receives M-Pesa + SMS. Use only if approve didn't work.</p>
       </div>
     </div>
     <div class="card">
@@ -244,14 +250,14 @@ tr:hover td { background:#3d152844; }
   <!-- FREELANCER: MY MATCHES -->
   <div id="page-mymatches" class="page">
     <h1>🤖 My Job Matches</h1>
-    <p class="subtitle">Jobs the AI matched you to — apply and deliver your work here</p>
+    <p class="subtitle">Jobs the AI matched you to</p>
     <div id="my-matches-list"><div class="empty"><span class="spinner"></span>Loading...</div></div>
   </div>
 
   <!-- FREELANCER: BROWSE JOBS -->
   <div id="page-browsejobs" class="page">
     <h1>💼 Browse Open Jobs</h1>
-    <p class="subtitle">All open jobs on the platform</p>
+    <p class="subtitle">All open jobs on the platform — apply directly here</p>
     <div id="browse-jobs-list"><div class="empty"><span class="spinner"></span>Loading...</div></div>
   </div>
 
@@ -277,50 +283,61 @@ tr:hover td { background:#3d152844; }
 const API = "https://trustgig-backend.onrender.com";
 let currentUser = null;
 
-async function apiCall(method, path, body=null) {
-  const opts = { method, headers:{'Content-Type':'application/json'} };
+// ── Core API helper ───────────────────────────────────────────────────────────
+async function apiCall(method, path, body = null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
   if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(API+path, opts);
+  const res = await fetch(API + path, opts);
   const data = await res.json();
-  if (!res.ok) throw new Error(data.detail||JSON.stringify(data));
+  if (!res.ok) throw new Error(data.detail || JSON.stringify(data));
   return data;
 }
 
-function showAlert(id, msg, type='success') {
+// ── UI Helpers ────────────────────────────────────────────────────────────────
+function showAlert(id, msg, type = 'success') {
   const el = document.getElementById(id);
+  if (!el) return;
   el.className = `alert alert-${type}`;
   el.textContent = msg;
   el.style.display = 'block';
-  setTimeout(()=>el.style.display='none', 6000);
+  setTimeout(() => el.style.display = 'none', 6000);
+}
+
+function setBtn(id, disabled, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.disabled = disabled;
+  el.textContent = text;
 }
 
 function statusBadge(s) {
-  const m = {open:'badge-green',in_progress:'badge-yellow',completed:'badge-blue',pending:'badge-orange',approved:'badge-blue',rejected:'badge-gray'};
-  return `<span class="badge ${m[s]||'badge-gray'}">${s}</span>`;
+  const m = { open: 'badge-green', in_progress: 'badge-yellow', completed: 'badge-blue', pending: 'badge-orange', approved: 'badge-blue', rejected: 'badge-gray' };
+  return `<span class="badge ${m[s] || 'badge-gray'}">${s.replace('_', ' ')}</span>`;
 }
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 function switchAuth(tab) {
-  document.getElementById('auth-login').style.display = tab==='login'?'block':'none';
-  document.getElementById('auth-signup').style.display = tab==='signup'?'block':'none';
-  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='signup')));
+  document.getElementById('auth-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('auth-signup').style.display = tab === 'signup' ? 'block' : 'none';
+  document.querySelectorAll('.auth-tab').forEach((t, i) =>
+    t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'signup')));
 }
 
 function toggleSignupFields() {
   document.getElementById('signup-freelancer-fields').style.display =
-    document.getElementById('signup-role').value==='freelancer'?'block':'none';
+    document.getElementById('signup-role').value === 'freelancer' ? 'block' : 'none';
 }
 
 async function login() {
   const phone = document.getElementById('login-phone').value.trim();
   const password = document.getElementById('login-password').value;
-  if (!phone||!password) { showAlert('alert-login','Please fill in all fields','error'); return; }
+  if (!phone || !password) { showAlert('alert-login', 'Please fill in all fields', 'error'); return; }
   try {
-    const data = await apiCall('POST','/login',{phone,password});
+    const data = await apiCall('POST', '/login', { phone, password });
     currentUser = data;
     localStorage.setItem('trustgig_user', JSON.stringify(data));
     initApp();
-  } catch(e) { showAlert('alert-login',`❌ ${e.message}`,'error'); }
+  } catch (e) { showAlert('alert-login', `❌ ${e.message}`, 'error'); }
 }
 
 async function signup() {
@@ -330,34 +347,34 @@ async function signup() {
     phone: document.getElementById('signup-phone').value.trim(),
     password: document.getElementById('signup-password').value,
     role,
-    skills: role==='freelancer'?document.getElementById('signup-skills').value:'',
-    experience: role==='freelancer'?document.getElementById('signup-experience').value:'',
+    skills: role === 'freelancer' ? document.getElementById('signup-skills').value : '',
+    experience: role === 'freelancer' ? document.getElementById('signup-experience').value : '',
     location: document.getElementById('signup-location').value.trim(),
-    jobs_applied:0, jobs_completed:0,
+    jobs_applied: 0, jobs_completed: 0,
   };
-  if (!body.name||!body.phone||!body.password) { showAlert('alert-signup','Please fill in all required fields','error'); return; }
+  if (!body.name || !body.phone || !body.password) { showAlert('alert-signup', 'Please fill in all required fields', 'error'); return; }
   try {
-    await apiCall('POST','/signup',body);
-    showAlert('alert-signup','✅ Account created! Please login 💕','success');
-    setTimeout(()=>switchAuth('login'),2000);
-  } catch(e) { showAlert('alert-signup',`❌ ${e.message}`,'error'); }
+    await apiCall('POST', '/signup', body);
+    showAlert('alert-signup', '✅ Account created! Please login 💕', 'success');
+    setTimeout(() => switchAuth('login'), 2000);
+  } catch (e) { showAlert('alert-signup', `❌ ${e.message}`, 'error'); }
 }
 
 function logout() {
   currentUser = null;
   localStorage.removeItem('trustgig_user');
-  document.getElementById('auth-page').style.display='block';
-  document.getElementById('app-page').style.display='none';
+  document.getElementById('auth-page').style.display = 'block';
+  document.getElementById('app-page').style.display = 'none';
 }
 
 // ── App Init ──────────────────────────────────────────────────────────────────
 function initApp() {
-  document.getElementById('auth-page').style.display='none';
-  document.getElementById('app-page').style.display='block';
+  document.getElementById('auth-page').style.display = 'none';
+  document.getElementById('app-page').style.display = 'block';
   document.getElementById('nav-user-name').textContent = `${currentUser.name} 💕`;
   document.getElementById('welcome-msg').textContent = `Welcome back, ${currentUser.name}! 💕`;
 
-  if (currentUser.role==='client') {
+  if (currentUser.role === 'client') {
     document.getElementById('welcome-sub').textContent = 'Post jobs and manage your freelancers';
     document.getElementById('role-badge').textContent = '👔 Client';
     document.getElementById('role-badge').className = 'role-badge role-client';
@@ -384,101 +401,110 @@ function initApp() {
 }
 
 function showPage(name, btn) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
   if (btn) btn.classList.add('active');
-  if (name==='overview') loadOverview();
-  if (name==='myjobs') loadMyJobs();
-  if (name==='escrow') { loadEscrow(); loadEscrowDropdowns(); }
-  if (name==='freelancers') loadFreelancers();
-  if (name==='mymatches') loadMyMatches();
-  if (name==='myapplications') loadMyApplications();
-  if (name==='browsejobs') loadBrowseJobs();
+  if (name === 'overview') loadOverview();
+  if (name === 'myjobs') loadMyJobs();
+  if (name === 'escrow') { loadEscrow(); loadEscrowDropdowns(); }
+  if (name === 'freelancers') loadFreelancers();
+  if (name === 'mymatches') loadMyMatches();
+  if (name === 'myapplications') loadMyApplications();
+  if (name === 'browsejobs') loadBrowseJobs();
 }
 
 // ── Overview ──────────────────────────────────────────────────────────────────
 async function loadOverview() {
   try {
-    const [jobs, users] = await Promise.all([apiCall('GET','/jobs'), apiCall('GET','/users')]);
+    const [jobs, users] = await Promise.all([apiCall('GET', '/jobs'), apiCall('GET', '/users')]);
     document.getElementById('stat-jobs').textContent = jobs.length;
-    document.getElementById('stat-freelancers').textContent = users.filter(u=>u.role==='freelancer').length;
-    document.getElementById('stat-clients').textContent = users.filter(u=>u.role==='client').length;
-    document.getElementById('stat-open').textContent = jobs.filter(j=>j.status==='open').length;
+    document.getElementById('stat-freelancers').textContent = users.filter(u => u.role === 'freelancer').length;
+    document.getElementById('stat-clients').textContent = users.filter(u => u.role === 'client').length;
+    document.getElementById('stat-open').textContent = jobs.filter(j => j.status === 'open').length;
     const tbody = document.getElementById('overview-jobs-table');
-    if (!jobs.length) { tbody.innerHTML='<tr><td colspan="5" class="empty">No jobs yet 🌸</td></tr>'; return; }
-    tbody.innerHTML = jobs.slice(0,10).map(j=>`<tr>
+    if (!jobs.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty">No jobs yet 🌸</td></tr>'; return; }
+    tbody.innerHTML = jobs.slice(0, 10).map(j => `<tr>
       <td>#${j.id}</td><td><strong>${j.title}</strong></td>
       <td>KES ${Number(j.budget).toLocaleString()}</td>
       <td>${statusBadge(j.status)}</td>
-      <td>${
-        currentUser.role==='client'
-          ? j.status==='open' ? `<button class="btn btn-secondary btn-sm" onclick="quickFundNav(${j.id},${j.budget})">Fund 💰</button>`
-          : j.status==='in_progress' ? `<button class="btn btn-warning btn-sm" onclick="quickReleaseNav(${j.id})">Release 🚀</button>`
-          : '✅ Done'
-          : `<button class="btn btn-secondary btn-sm" onclick="applyFromOverview(${j.id})">Apply 💌</button>`
+      <td>${currentUser.role === 'client'
+        ? j.status === 'open'
+          ? `<button class="btn btn-secondary btn-sm" onclick="goFundJob(${j.id},${j.budget})">Fund 💰</button>`
+          : j.status === 'in_progress'
+            ? `<button class="btn btn-warning btn-sm" onclick="goReleaseJob(${j.id})">Release 🚀</button>`
+            : '✅ Done'
+        : j.status === 'open'
+          ? `<button class="btn btn-secondary btn-sm" onclick="applyToJob(${j.id}, this)">Apply 💌</button>`
+          : statusBadge(j.status)
       }</td></tr>`).join('');
-  } catch(e) {
-    document.getElementById('overview-jobs-table').innerHTML=`<tr><td colspan="5" class="empty">❌ ${e.message}</td></tr>`;
+  } catch (e) {
+    document.getElementById('overview-jobs-table').innerHTML = `<tr><td colspan="5" class="empty">❌ ${e.message}</td></tr>`;
   }
 }
 
-function quickFundNav(job_id, budget) {
-  showPage('escrow', document.querySelectorAll('.nav-tab')[3]);
-  setTimeout(()=>{ document.getElementById('fund-job-id').value=job_id; document.getElementById('fund-amount').value=budget; },400);
+// ✅ Fix: navigate to escrow by name not index
+function goFundJob(job_id, budget) {
+  showPage('escrow', [...document.querySelectorAll('.nav-tab')].find(t => t.textContent.includes('Escrow')));
+  setTimeout(async () => {
+    await loadEscrowDropdowns();
+    document.getElementById('fund-job-id').value = job_id;
+    document.getElementById('fund-amount').value = budget;
+    await loadApplicantsForFund();
+  }, 300);
 }
-function quickReleaseNav(job_id) {
-  showPage('escrow', document.querySelectorAll('.nav-tab')[3]);
-  setTimeout(()=>{ document.getElementById('release-job-id').value=job_id; },400);
+
+function goReleaseJob(job_id) {
+  showPage('escrow', [...document.querySelectorAll('.nav-tab')].find(t => t.textContent.includes('Escrow')));
+  setTimeout(() => { document.getElementById('release-job-id').value = job_id; }, 300);
 }
 
 // ── Client: My Jobs ───────────────────────────────────────────────────────────
 async function loadMyJobs() {
   const el = document.getElementById('my-jobs-list');
   try {
-    const jobs = await apiCall('GET','/jobs');
-    const mine = jobs.filter(j=>j.client_id===currentUser.id);
-    if (!mine.length) { el.innerHTML='<div class="empty">No jobs posted yet. Click ➕ Post Job! 🌸</div>'; return; }
+    const jobs = await apiCall('GET', '/jobs');
+    const mine = jobs.filter(j => j.client_id === currentUser.id);
+    if (!mine.length) { el.innerHTML = '<div class="empty">No jobs posted yet. Click ➕ Post Job! 🌸</div>'; return; }
 
-    el.innerHTML = mine.map(j=>`
+    el.innerHTML = mine.map(j => `
       <div class="card" style="margin-bottom:16px" id="job-card-${j.id}">
         <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
           <div>
             <h3>#${j.id} — ${j.title}</h3>
             <p style="font-size:13px;color:#c084a0">💰 KES ${Number(j.budget).toLocaleString()} &nbsp;|&nbsp;
-            🛠 ${Array.isArray(j.skills_required)?j.skills_required.join(', '):j.skills_required||'—'}</p>
+            🛠 ${Array.isArray(j.skills_required) ? j.skills_required.join(', ') : j.skills_required || '—'}</p>
           </div>
           ${statusBadge(j.status)}
         </div>
-        <div id="matches-${j.id}"><span class="spinner"></span> Loading matches...</div>
+        <div id="matches-${j.id}"><span class="spinner"></span> Loading applicants...</div>
         <div id="delivery-${j.id}"></div>
       </div>`).join('');
 
     mine.forEach(j => { loadJobMatches(j.id); loadDeliveryForClient(j.id); });
-  } catch(e) { el.innerHTML=`<div class="empty">❌ ${e.message}</div>`; }
+  } catch (e) { el.innerHTML = `<div class="empty">❌ ${e.message}</div>`; }
 }
 
 async function loadJobMatches(jobId) {
   const el = document.getElementById(`matches-${jobId}`);
   try {
-    const data = await apiCall('GET',`/match/${jobId}`);
-    const matches = data.matches||[];
-    if (!matches.length) { el.innerHTML='<p style="font-size:13px;color:#c084a0">No matches yet</p>'; return; }
-    const rc=['gold','silver','bronze'];
-    el.innerHTML = `<p style="font-size:13px;color:#c084a0;margin-bottom:10px">🤖 Top ${matches.length} AI Matches</p>` +
-      matches.map((m,i)=>`
+    const data = await apiCall('GET', `/jobs/${jobId}/applications`);
+    const matches = data.applications || [];
+    if (!matches.length) { el.innerHTML = '<p style="font-size:13px;color:#c084a0">No applicants yet 🌸</p>'; return; }
+    const rc = ['gold', 'silver', 'bronze'];
+    el.innerHTML = `<p style="font-size:13px;color:#c084a0;margin-bottom:10px">👥 ${matches.length} Applicant(s)</p>` +
+      matches.map((m, i) => `
         <div class="match-card">
-          <div class="match-rank ${rc[i]||''}">${i+1}</div>
+          <div class="match-rank ${rc[i] || ''}">${i + 1}</div>
           <div class="match-info">
             <div class="match-name">${m.name}</div>
-            <div style="font-size:12px;color:#c084a0">${Array.isArray(m.skills)?m.skills.join(', '):''}</div>
-            <div class="match-score-bar"><div class="match-score-fill" style="width:${m.score*100}%"></div></div>
+            <div style="font-size:12px;color:#c084a0">${Array.isArray(m.skills) ? m.skills.join(', ') : ''}</div>
+            <div class="match-score-bar"><div class="match-score-fill" style="width:${m.score * 100}%"></div></div>
           </div>
-          <div class="match-score-text">${(m.score*100).toFixed(0)}%</div>
+          <div class="match-score-text">${(m.score * 100).toFixed(0)}%</div>
         </div>`).join('');
-  } catch(e) { 
-    // A 404 or empty means no matches exist in the DB yet, which is normal for new jobs
-    el.innerHTML='<p style="font-size:13px;color:#c084a0;margin-top:10px">No matches found yet. Waiting for AI... 🌸</p>'; 
+  } catch (e) {
+    el.innerHTML = '<p style="font-size:13px;color:#c084a0;margin-top:10px">No applicants yet 🌸</p>';
   }
 }
 
@@ -498,16 +524,15 @@ async function loadDeliveryForClient(jobId) {
           <button class="btn btn-danger btn-sm" onclick="rejectDelivery(${jobId})">❌ Request Revision</button>
         </div>` : ''}
       </div>`;
-  } catch(e) {
-    // No delivery yet — show a waiting state to the client
+  } catch (e) {
     const job = await apiCall('GET', `/jobs/${jobId}`).catch(() => null);
     if (job && job.status === 'in_progress') {
       el.innerHTML = `
         <div class="delivery-box" style="border-color:#4a2010">
           <h4 style="color:#fdba74">⏳ Awaiting Work Delivery</h4>
           <p style="font-size:13px;color:#c084a0;margin-top:4px">
-            The freelancer has been notified and is working on this job. 
-            This section will update automatically once they submit their work.
+            The freelancer has been notified and is working on this job.
+            This section updates once they submit their work.
           </p>
         </div>`;
     } else {
@@ -522,7 +547,7 @@ async function approveDelivery(job_id) {
     await apiCall('POST', `/jobs/${job_id}/approve`);
     alert('✅ Delivery approved! Payment released to freelancer via M-Pesa 💸');
     loadMyJobs();
-  } catch(e) { alert(`❌ ${e.message}`); }
+  } catch (e) { alert(`❌ ${e.message}`); }
 }
 
 async function rejectDelivery(job_id) {
@@ -531,195 +556,179 @@ async function rejectDelivery(job_id) {
     await apiCall('POST', `/jobs/${job_id}/reject`);
     alert('🔄 Delivery rejected. Freelancer notified via SMS to revise.');
     loadMyJobs();
-  } catch(e) { alert(`❌ ${e.message}`); }
+  } catch (e) { alert(`❌ ${e.message}`); }
 }
 
 // ── Client: Post Job ──────────────────────────────────────────────────────────
 async function createJob() {
   const body = {
     client_id: currentUser.id,
-    title: document.getElementById('job-title').value,
-    description: document.getElementById('job-description').value,
-    skills_required: document.getElementById('job-skills').value,
+    title: document.getElementById('job-title').value.trim(),
+    description: document.getElementById('job-description').value.trim(),
+    skills_required: document.getElementById('job-skills').value.trim(),
     budget: parseFloat(document.getElementById('job-budget').value),
   };
-  if (!body.title||!body.budget) { showAlert('alert-job','Title and budget are required','error'); return; }
+  if (!body.title || !body.budget) { showAlert('alert-job', 'Title and budget are required', 'error'); return; }
+  const btn = document.getElementById('post-job-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Posting...';
   try {
-    showAlert('alert-job','⚡ Posting job and triggering AI matching...','info');
-    const data = await apiCall('POST','/jobs',body);
-    showAlert('alert-job',`✅ Job "${data.title}" posted (ID:${data.id})! Matched freelancers get SMS 📱`,'success');
-    ['job-title','job-description','job-skills','job-budget'].forEach(id=>document.getElementById(id).value='');
-  } catch(e) { showAlert('alert-job',`❌ ${e.message}`,'error'); }
+    showAlert('alert-job', '⚡ Posting job and triggering AI matching...', 'info');
+    const data = await apiCall('POST', '/jobs', body);
+    showAlert('alert-job', `✅ Job "${data.title}" posted (ID:${data.id})! Matched freelancers get SMS 📱`, 'success');
+    ['job-title', 'job-description', 'job-skills', 'job-budget'].forEach(id => document.getElementById(id).value = '');
+  } catch (e) {
+    showAlert('alert-job', `❌ ${e.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🚀 Post Job + Trigger AI Matching';
+  }
 }
 
 // ── Client: Escrow ────────────────────────────────────────────────────────────
 async function loadEscrow() {
   try {
-    const jobs = await apiCall('GET','/jobs');
-    const mine = jobs.filter(j=>j.client_id===currentUser.id);
+    const jobs = await apiCall('GET', '/jobs');
+    const mine = jobs.filter(j => j.client_id === currentUser.id);
     const tbody = document.getElementById('escrow-jobs-table');
-    if (!mine.length) { tbody.innerHTML='<tr><td colspan="5" class="empty">No jobs yet</td></tr>'; return; }
-    tbody.innerHTML = mine.map(j=>`<tr>
+    if (!mine.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty">No jobs yet</td></tr>'; return; }
+    tbody.innerHTML = mine.map(j => `<tr>
       <td>#${j.id}</td><td>${j.title}</td>
       <td>KES ${Number(j.budget).toLocaleString()}</td>
       <td>${statusBadge(j.status)}</td>
       <td>${
-        j.status==='open' ? `<button class="btn btn-secondary btn-sm" onclick="quickFund(${j.id},${j.budget})">Fund 💰</button>`
-        : j.status==='in_progress' ? `<button class="btn btn-warning btn-sm" onclick="quickRelease(${j.id})">Release 🚀</button>`
-        : '<span style="color:#c084a0;font-size:12px">✅ Done</span>'
+        j.status === 'open'
+          ? `<button class="btn btn-secondary btn-sm" onclick="goFundJob(${j.id},${j.budget})">Fund 💰</button>`
+          : j.status === 'in_progress'
+            ? `<button class="btn btn-warning btn-sm" onclick="goReleaseJob(${j.id})">Release 🚀</button>`
+            : '<span style="color:#c084a0;font-size:12px">✅ Done</span>'
       }</td></tr>`).join('');
-  } catch(e) { document.getElementById('escrow-jobs-table').innerHTML=`<tr><td colspan="5" class="empty">❌ ${e.message}</td></tr>`; }
+  } catch (e) {
+    document.getElementById('escrow-jobs-table').innerHTML = `<tr><td colspan="5" class="empty">❌ ${e.message}</td></tr>`;
+  }
 }
 
 async function loadEscrowDropdowns() {
   try {
-    const jobs = await apiCall('GET','/jobs');
-    const mine = jobs.filter(j=>j.client_id===currentUser.id);
-    const opts = '<option value="">— Select a job —</option>'+mine.map(j=>`<option value="${j.id}">#${j.id} — ${j.title} (${j.status})</option>`).join('');
+    const jobs = await apiCall('GET', '/jobs');
+    const mine = jobs.filter(j => j.client_id === currentUser.id);
+    const opts = '<option value="">— Select a job —</option>' +
+      mine.map(j => `<option value="${j.id}">#${j.id} — ${j.title} (${j.status.replace('_',' ')})</option>`).join('');
     document.getElementById('fund-job-id').innerHTML = opts;
     document.getElementById('release-job-id').innerHTML = opts;
-  } catch(e) {}
-}
-
-async function fundEscrow() {
-  const job_id=parseInt(document.getElementById('fund-job-id').value);
-  const freelancer_id=parseInt(document.getElementById('fund-freelancer-id').value);
-  const amount=parseFloat(document.getElementById('fund-amount').value);
-  if (!job_id) { showAlert('alert-fund','Please select a job','error'); return; }
-  if (!freelancer_id) { showAlert('alert-fund','Please select a freelancer to hire','error'); return; }
-  if (!amount) { showAlert('alert-fund','Please enter an amount','error'); return; }
-  try {
-    const result = await apiCall('POST','/escrow/fund',{job_id, freelancer_id, amount});
-    showAlert('alert-fund',`✅ Escrow of KES ${amount.toLocaleString()} funded! ${result.freelancer_name} notified via SMS 📱`,'success');
-    loadEscrow(); loadEscrowDropdowns();
-  } catch(e) { showAlert('alert-fund',`❌ ${e.message}`,'error'); }
+  } catch (e) {}
 }
 
 async function loadApplicantsForFund() {
   const job_id = parseInt(document.getElementById('fund-job-id').value);
   const sel = document.getElementById('fund-freelancer-id');
-  sel.innerHTML = '<option value="">Loading...</option>';
-  if (!job_id) { sel.innerHTML='<option value="">— select a job first —</option>'; return; }
+  if (!job_id) { sel.innerHTML = '<option value="">— select a job first —</option>'; return; }
+  sel.innerHTML = '<option value="">Loading applicants...</option>';
   try {
     const data = await apiCall('GET', `/jobs/${job_id}/applications`);
     const apps = data.applications || [];
     if (!apps.length) {
-      sel.innerHTML='<option value="">No applicants yet</option>';
+      sel.innerHTML = '<option value="">No applicants yet — freelancers must apply first</option>';
     } else {
-      sel.innerHTML = apps.map(a=>`<option value="${a.freelancer_id}">${a.name} (${(a.score*100).toFixed(0)}% match)</option>`).join('');
+      sel.innerHTML = apps.map(a =>
+        `<option value="${a.freelancer_id}">${a.name} — ${(a.score * 100).toFixed(0)}% match</option>`
+      ).join('');
     }
-    // also pre-fill the amount from job budget
-    const job = await apiCall('GET', `/jobs/${job_id}`).catch(()=>null);
+    const job = await apiCall('GET', `/jobs/${job_id}`).catch(() => null);
     if (job) document.getElementById('fund-amount').value = job.budget;
-  } catch(e) {
-    sel.innerHTML='<option value="">Could not load applicants</option>';
+  } catch (e) {
+    sel.innerHTML = '<option value="">Could not load applicants</option>';
   }
 }
 
-async function quickFund(job_id,budget) {
-  showPage('escrow', document.querySelectorAll('.nav-tab')[3]);
-  setTimeout(async ()=>{
-    document.getElementById('fund-job-id').value=job_id;
-    document.getElementById('fund-amount').value=budget;
-    await loadApplicantsForFund();
-  },400);
+async function fundEscrow() {
+  const job_id = parseInt(document.getElementById('fund-job-id').value);
+  const freelancer_id = parseInt(document.getElementById('fund-freelancer-id').value);
+  const amount = parseFloat(document.getElementById('fund-amount').value);
+  if (!job_id) { showAlert('alert-fund', 'Please select a job', 'error'); return; }
+  if (!freelancer_id) { showAlert('alert-fund', 'Please select a freelancer to hire', 'error'); return; }
+  if (!amount || amount <= 0) { showAlert('alert-fund', 'Please enter a valid amount', 'error'); return; }
+  try {
+    showAlert('alert-fund', '⏳ Funding escrow...', 'info');
+    const result = await apiCall('POST', '/escrow/fund', { job_id, freelancer_id, amount });
+    showAlert('alert-fund', `✅ KES ${amount.toLocaleString()} funded! ${result.freelancer_name} notified via SMS 📱`, 'success');
+    loadEscrow();
+    loadEscrowDropdowns();
+  } catch (e) { showAlert('alert-fund', `❌ ${e.message}`, 'error'); }
 }
 
 async function releasePayment() {
-  const job_id=parseInt(document.getElementById('release-job-id').value);
-  if (!job_id) { showAlert('alert-release','Please select a job','error'); return; }
+  const job_id = parseInt(document.getElementById('release-job-id').value);
+  if (!job_id) { showAlert('alert-release', 'Please select a job', 'error'); return; }
+  if (!confirm('Release payment to the freelancer via M-Pesa?')) return;
   try {
-    await apiCall('POST','/escrow/release',{job_id});
-    showAlert('alert-release',`✅ Payment released! Freelancer gets M-Pesa + SMS 💸`,'success');
-    loadEscrow(); loadEscrowDropdowns();
-  } catch(e) { showAlert('alert-release',`❌ ${e.message}`,'error'); }
+    await apiCall('POST', '/escrow/release', { job_id });
+    showAlert('alert-release', '✅ Payment released! Freelancer gets M-Pesa + SMS 💸', 'success');
+    loadEscrow();
+    loadEscrowDropdowns();
+  } catch (e) { showAlert('alert-release', `❌ ${e.message}`, 'error'); }
 }
 
-async function quickRelease(job_id) { document.getElementById('release-job-id').value=job_id; await releasePayment(); }
-
-// ── Freelancer: My Matches (with deliver work) ────────────────────────────────
+// ── Freelancer: My Matches ────────────────────────────────────────────────────
 async function loadMyMatches() {
   const el = document.getElementById('my-matches-list');
+  el.innerHTML = '<div class="empty"><span class="spinner"></span>Loading...</div>';
   try {
-    const profile = await apiCall('GET',`/profile/${currentUser.id}`);
-    const matches = profile.matches||[];
-    if (!matches.length) { el.innerHTML='<div class="empty">No matches yet. Check back after new jobs are posted! 🌸</div>'; return; }
+    const profile = await apiCall('GET', `/profile/${currentUser.id}`);
+    const matches = profile.matches || [];
+    if (!matches.length) { el.innerHTML = '<div class="empty">No matches yet. Check back after new jobs are posted! 🌸</div>'; return; }
 
     const cards = await Promise.all(matches.map(async m => {
       let job = null;
-      try { job = await apiCall('GET',`/jobs/${m.job_id}`); } catch(e){}
+      try { job = await apiCall('GET', `/jobs/${m.job_id}`); } catch (e) {}
 
-      // Check if already delivered
       let deliverySection = '';
       try {
-        const delivery = await apiCall('GET',`/jobs/${m.job_id}/delivery`);
-        deliverySection = `
-          <div class="delivery-box">
-            <h4>📤 Work Submitted</h4>
-            <p style="font-size:12px;color:#c084a0">Status: ${statusBadge(delivery.status)}</p>
-            ${delivery.status === 'rejected' ? `
-              <p style="font-size:12px;color:#f87171;margin-top:6px">Client requested revisions. Please resubmit below.</p>
+        const delivery = await apiCall('GET', `/jobs/${m.job_id}/delivery`);
+        if (delivery.status === 'rejected') {
+          deliverySection = `
+            <div class="delivery-box">
+              <h4>📤 Work Submitted — ${statusBadge(delivery.status)}</h4>
+              <p style="font-size:12px;color:#f87171;margin:8px 0">⚠️ Client requested revisions. Resubmit below.</p>
               ${deliverForm(m.job_id)}
-            ` : ''}
-          </div>`;
-      } catch(e) {
-        // No delivery yet — show form if job is in progress
+            </div>`;
+        } else {
+          deliverySection = `
+            <div class="delivery-box">
+              <h4>📤 Work Submitted — ${statusBadge(delivery.status)}</h4>
+              <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">🔗 ${delivery.delivery_link}</a>
+              <p style="font-size:12px;color:#c084a0;margin-top:6px">${delivery.status === 'approved' ? '✅ Payment released to your M-Pesa!' : '⏳ Waiting for client review...'}</p>
+            </div>`;
+        }
+      } catch (e) {
         const jobStatus = job ? job.status : '';
-        deliverySection = (jobStatus === 'in_progress' || jobStatus === 'open')
-          ? `<div class="delivery-box"><h4>📤 Submit Your Work</h4>${jobStatus === 'in_progress' ? '<p style="font-size:12px;color:#4ade80;margin-bottom:10px">✅ You\'ve been hired! Submit your completed work below.</p>' : '<p style="font-size:12px;color:#c084a0;margin-bottom:10px">⏳ You can pre-submit your work — client will review after funding.</p>'}${deliverForm(m.job_id)}</div>`
-          : '';
+        if (jobStatus === 'in_progress') {
+          deliverySection = `
+            <div class="delivery-box">
+              <h4>📤 Submit Your Work</h4>
+              <p style="font-size:12px;color:#4ade80;margin-bottom:10px">✅ You've been hired! Submit your completed work below.</p>
+              ${deliverForm(m.job_id)}
+            </div>`;
+        } else if (jobStatus === 'open') {
+          deliverySection = `<p style="font-size:12px;color:#c084a0;margin-top:8px">⏳ Waiting for client to fund escrow...</p>`;
+        }
       }
 
       return `
         <div class="card" style="margin-bottom:16px">
           <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
-            <h3>${job ? job.title : 'Job #'+m.job_id}</h3>
-            <span style="font-size:18px;font-weight:700;color:#f472b6">${(m.score*100).toFixed(0)}%</span>
+            <h3>${job ? job.title : 'Job #' + m.job_id}</h3>
+            <span style="font-size:18px;font-weight:700;color:#f472b6">${(m.score * 100).toFixed(0)}%</span>
           </div>
           ${job ? `<p style="font-size:13px;color:#c084a0;margin-bottom:8px">💰 KES ${Number(job.budget).toLocaleString()} &nbsp;|&nbsp; ${statusBadge(job.status)}</p>` : ''}
-          <div class="match-score-bar" style="margin-bottom:12px"><div class="match-score-fill" style="width:${m.score*100}%"></div></div>
-          ${job && job.status === 'open' ? `<button class="btn btn-secondary btn-sm" onclick="applyToJobById(${m.job_id})" style="margin-bottom:12px">Apply Now 💌</button>` : ''}
+          <div class="match-score-bar" style="margin-bottom:12px"><div class="match-score-fill" style="width:${m.score * 100}%"></div></div>
+          ${job && job.status === 'open' ? `<button class="btn btn-secondary btn-sm" onclick="applyToJob(${m.job_id}, this)" style="margin-bottom:12px">Apply Now 💌</button>` : ''}
           ${deliverySection}
         </div>`;
     }));
 
     el.innerHTML = cards.join('');
-  } catch(e) { el.innerHTML=`<div class="empty">❌ ${e.message}</div>`; }
-}
-
-async function applyToJobById(jobId) {
-  if (!confirm(`Apply for Job #${jobId}?`)) return;
-  try {
-    const data = await apiCall('POST', `/jobs/${jobId}/apply`, { freelancer_id: currentUser.id });
-    alert(`✅ ${data.message || 'Applied!'} Client has been notified!`);
-    loadMyMatches();
-  } catch(e) {
-    alert(`❌ Failed to apply: ${e.message}`);
-  }
-}
-
-function deliverForm(jobId) {
-  return `
-    <div class="form-group" style="margin-top:10px">
-      <label>Work Link (Google Drive, GitHub, Figma, etc)</label>
-      <input type="text" id="deliver-link-${jobId}" placeholder="https://drive.google.com/...">
-    </div>
-    <div class="form-group">
-      <label>Message to Client</label>
-      <textarea id="deliver-msg-${jobId}" placeholder="Describe what you completed..." style="min-height:60px"></textarea>
-    </div>
-    <button class="btn btn-secondary btn-sm" onclick="deliverWork(${jobId})">📤 Submit Work</button>`;
-}
-
-async function deliverWork(job_id) {
-  const link = document.getElementById(`deliver-link-${job_id}`)?.value.trim();
-  const message = document.getElementById(`deliver-msg-${job_id}`)?.value.trim();
-  if (!link||!message) { alert('Please fill in both the link and message'); return; }
-  try {
-    await apiCall('POST',`/jobs/${job_id}/deliver`,{freelancer_id:currentUser.id, delivery_link:link, message});
-    alert('✅ Work submitted! Client has been notified via SMS 📱\n\nThey will review and release your payment once approved.');
-    loadMyMatches();
-  } catch(e) { alert(`❌ ${e.message}`); }
+  } catch (e) { el.innerHTML = `<div class="empty">❌ ${e.message}</div>`; }
 }
 
 // ── Freelancer: My Applications ───────────────────────────────────────────────
@@ -727,22 +736,21 @@ async function loadMyApplications() {
   const el = document.getElementById('my-applications-list');
   el.innerHTML = '<div class="empty"><span class="spinner"></span>Loading...</div>';
   try {
-    // Get all jobs, then filter to ones this freelancer has a match record for
-    const jobs = await apiCall('GET', '/jobs');
-    if (!jobs.length) { el.innerHTML = '<div class="empty">No jobs found 🌸</div>'; return; }
+    // ✅ Fix: get all jobs first, then check matches in parallel — much faster
+    const [jobs] = await Promise.all([apiCall('GET', '/jobs')]);
+    if (!jobs.length) { el.innerHTML = '<div class="empty">No jobs on platform yet 🌸</div>'; return; }
 
-    // Check each job for this freelancer's match record (application)
-    const applied = [];
-    await Promise.all(jobs.map(async j => {
+    const matchChecks = await Promise.all(jobs.map(async j => {
       try {
-        const data = await apiCall('GET', `/match/${j.id}`);
-        const myMatch = (data.matches||[]).find(m => m.freelancer_id === currentUser.id);
-        if (myMatch) applied.push({ job: j, match: myMatch });
-      } catch(e) {}
+        const data = await apiCall('GET', `/jobs/${j.id}/applications`);
+        const mine = (data.applications || []).find(a => a.freelancer_id === currentUser.id);
+        return mine ? { job: j, match: mine } : null;
+      } catch (e) { return null; }
     }));
 
+    const applied = matchChecks.filter(Boolean);
     if (!applied.length) {
-      el.innerHTML = '<div class="empty">You haven\'t applied to any jobs yet. Go to 💼 Browse Jobs to apply! 🌸</div>';
+      el.innerHTML = '<div class="empty">You haven\'t applied to any jobs yet. Go to 💼 Browse Jobs! 🌸</div>';
       return;
     }
 
@@ -754,25 +762,29 @@ async function loadMyApplications() {
       let deliverySection = '';
       try {
         const delivery = await apiCall('GET', `/jobs/${j.id}/delivery`);
-        const isMyDelivery = delivery.freelancer_id === currentUser.id;
-        if (isMyDelivery) {
-          deliverySection = `
-            <div class="delivery-box">
-              <h4>📤 Work Submitted</h4>
-              <p style="font-size:12px;color:#c084a0;margin-bottom:6px">Status: ${statusBadge(delivery.status)}</p>
-              <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">🔗 ${delivery.delivery_link}</a>
-              ${delivery.status === 'rejected' ? `
-                <p style="font-size:12px;color:#f87171;margin:8px 0">⚠️ Client requested revisions. Please resubmit below.</p>
-                ${deliverForm(j.id)}` : ''}
-            </div>`;
+        if (delivery.freelancer_id === currentUser.id) {
+          if (delivery.status === 'rejected') {
+            deliverySection = `
+              <div class="delivery-box">
+                <h4>📤 Work Submitted — ${statusBadge(delivery.status)}</h4>
+                <p style="font-size:12px;color:#f87171;margin:8px 0">⚠️ Client requested revisions. Resubmit below.</p>
+                ${deliverForm(j.id)}
+              </div>`;
+          } else {
+            deliverySection = `
+              <div class="delivery-box">
+                <h4>📤 Work Submitted — ${statusBadge(delivery.status)}</h4>
+                <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">🔗 ${delivery.delivery_link}</a>
+                <p style="font-size:12px;color:#c084a0;margin-top:6px">${delivery.status === 'approved' ? '✅ Payment released to your M-Pesa!' : '⏳ Waiting for client to approve...'}</p>
+              </div>`;
+          }
         }
-      } catch(e) {
-        // No delivery yet
+      } catch (e) {
         if (j.status === 'in_progress') {
           deliverySection = `
             <div class="delivery-box">
               <h4>📤 Submit Your Work</h4>
-              <p style="font-size:12px;color:#4ade80;margin-bottom:10px">✅ You've been hired! Upload your completed work below.</p>
+              <p style="font-size:12px;color:#4ade80;margin-bottom:10px">✅ You've been hired! Submit your completed work below.</p>
               ${deliverForm(j.id)}
             </div>`;
         } else if (j.status === 'open') {
@@ -785,23 +797,23 @@ async function loadMyApplications() {
           <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
             <div>
               <h3>#${j.id} — ${j.title}</h3>
-              <p style="font-size:13px;color:#c084a0;margin-top:4px">${j.description||''}</p>
+              <p style="font-size:13px;color:#c084a0;margin-top:4px">${j.description || ''}</p>
             </div>
             ${statusBadge(j.status)}
           </div>
           <p style="font-size:13px;color:#c084a0;margin-bottom:10px">
             💰 KES ${Number(j.budget).toLocaleString()}
-            &nbsp;|&nbsp; Match Score: <strong style="color:#f472b6">${(myMatch.score*100).toFixed(0)}%</strong>
+            &nbsp;|&nbsp; Match Score: <strong style="color:#f472b6">${(myMatch.score * 100).toFixed(0)}%</strong>
           </p>
           <div class="match-score-bar" style="margin-bottom:12px">
-            <div class="match-score-fill" style="width:${myMatch.score*100}%"></div>
+            <div class="match-score-fill" style="width:${myMatch.score * 100}%"></div>
           </div>
           ${deliverySection}
         </div>`;
     }));
 
     el.innerHTML = cards.join('');
-  } catch(e) {
+  } catch (e) {
     el.innerHTML = `<div class="empty">❌ ${e.message}</div>`;
   }
 }
@@ -809,17 +821,18 @@ async function loadMyApplications() {
 // ── Freelancer: Browse Jobs ───────────────────────────────────────────────────
 async function loadBrowseJobs() {
   const el = document.getElementById('browse-jobs-list');
+  el.innerHTML = '<div class="empty"><span class="spinner"></span>Loading...</div>';
   try {
-    const jobs = await apiCall('GET','/jobs?status=open');
-    if (!jobs.length) { el.innerHTML='<div class="empty">No open jobs right now 🌸</div>'; return; }
-    el.innerHTML = jobs.map(j=>`
+    const jobs = await apiCall('GET', '/jobs?status=open');
+    if (!jobs.length) { el.innerHTML = '<div class="empty">No open jobs right now 🌸</div>'; return; }
+    el.innerHTML = jobs.map(j => `
       <div class="card" style="margin-bottom:16px">
         <div style="display:flex;justify-content:space-between;align-items:start">
           <div>
             <h3>#${j.id} — ${j.title}</h3>
-            <p style="font-size:13px;color:#c084a0;margin:6px 0">${j.description||'No description'}</p>
+            <p style="font-size:13px;color:#c084a0;margin:6px 0">${j.description || 'No description'}</p>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-              ${(Array.isArray(j.skills_required)?j.skills_required:(j.skills_required||'').split(',')).map(s=>`<span class="skill-tag">${s.trim()}</span>`).join('')}
+              ${(Array.isArray(j.skills_required) ? j.skills_required : (j.skills_required || '').split(',')).map(s => `<span class="skill-tag">${s.trim()}</span>`).join('')}
             </div>
           </div>
           <div style="text-align:right;flex-shrink:0;margin-left:16px">
@@ -828,51 +841,115 @@ async function loadBrowseJobs() {
           </div>
         </div>
         <div style="margin-top:14px">
-          <button class="btn btn-secondary btn-sm" onclick="applyToJobById(${j.id})">Apply Now 💌</button>
+          <button class="btn btn-secondary btn-sm" id="apply-btn-${j.id}" onclick="applyToJob(${j.id}, this)">Apply Now 💌</button>
         </div>
       </div>`).join('');
-  } catch(e) { el.innerHTML=`<div class="empty">❌ ${e.message}</div>`; }
+  } catch (e) { el.innerHTML = `<div class="empty">❌ ${e.message}</div>`; }
 }
 
-async function applyToJobById(job_id) {
+// ✅ Fix: single applyToJob function — no duplicate, has loading state
+async function applyToJob(job_id, btnEl) {
+  if (!currentUser || currentUser.role !== 'freelancer') return;
+  if (btnEl) { btnEl.disabled = true; btnEl.textContent = '⏳ Applying...'; }
   try {
-    const data = await apiCall('POST',`/jobs/${job_id}/apply`,{freelancer_id:currentUser.id});
-    alert(`✅ ${data.message}\n📱 Client has been notified with a link to fund escrow!`);
-  } catch(e) { alert(`❌ ${e.message}`); }
+    const data = await apiCall('POST', `/jobs/${job_id}/apply`, { freelancer_id: currentUser.id });
+    alert(`✅ ${data.message}\n📱 Client has been notified!`);
+    // Refresh the active page
+    const activePage = document.querySelector('.page.active');
+    if (activePage) {
+      const pageId = activePage.id.replace('page-', '');
+      if (pageId === 'browsejobs') loadBrowseJobs();
+      if (pageId === 'overview') loadOverview();
+      if (pageId === 'myapplications') loadMyApplications();
+    }
+  } catch (e) {
+    alert(`❌ ${e.message}`);
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = 'Apply Now 💌'; }
+  }
 }
 
-async function applyFromOverview(job_id) {
-  if (!currentUser||currentUser.role!=='freelancer') return;
-  await applyToJobById(job_id);
+// ── Deliver Work ──────────────────────────────────────────────────────────────
+function deliverForm(jobId) {
+  return `
+    <div class="form-group" style="margin-top:10px">
+      <label>Work Link (Google Drive, GitHub, Figma, etc)</label>
+      <input type="text" id="deliver-link-${jobId}" placeholder="https://drive.google.com/...">
+    </div>
+    <div class="form-group">
+      <label>Message to Client</label>
+      <textarea id="deliver-msg-${jobId}" placeholder="Describe what you completed..." style="min-height:60px"></textarea>
+    </div>
+    <button class="btn btn-secondary btn-sm" id="deliver-btn-${jobId}" onclick="deliverWork(${jobId})">📤 Submit Work</button>`;
+}
+
+// ✅ Fix: clear error feedback, loading state, proper element lookup
+async function deliverWork(job_id) {
+  const linkEl = document.getElementById(`deliver-link-${job_id}`);
+  const msgEl  = document.getElementById(`deliver-msg-${job_id}`);
+  const btn    = document.getElementById(`deliver-btn-${job_id}`);
+
+  if (!linkEl || !msgEl) {
+    alert('❌ Form not found. Please refresh the page and try again.');
+    return;
+  }
+
+  const link    = linkEl.value.trim();
+  const message = msgEl.value.trim();
+
+  if (!link)    { alert('⚠️ Please paste your work link (Google Drive, GitHub, Figma, etc)'); return; }
+  if (!message) { alert('⚠️ Please write a short message to the client'); return; }
+
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Submitting...'; }
+
+  try {
+    await apiCall('POST', `/jobs/${job_id}/deliver`, {
+      freelancer_id: currentUser.id,
+      delivery_link: link,
+      message: message,
+    });
+    alert('✅ Work submitted successfully!\n\nThe client has been notified via SMS 📱\nThey will review and release payment once approved.');
+    // Refresh active page
+    const activePage = document.querySelector('.page.active');
+    if (activePage) {
+      const pageId = activePage.id.replace('page-', '');
+      if (pageId === 'mymatches') loadMyMatches();
+      if (pageId === 'myapplications') loadMyApplications();
+    }
+  } catch (e) {
+    alert(`❌ Submission failed: ${e.message}`);
+    if (btn) { btn.disabled = false; btn.textContent = '📤 Submit Work'; }
+  }
 }
 
 // ── Freelancers Directory ─────────────────────────────────────────────────────
-let allFreelancers=[];
+let allFreelancers = [];
 async function loadFreelancers() {
   try {
-    const users = await apiCall('GET','/users');
-    allFreelancers = users.filter(u=>u.role==='freelancer');
+    const users = await apiCall('GET', '/users');
+    allFreelancers = users.filter(u => u.role === 'freelancer');
     renderFreelancers(allFreelancers);
-  } catch(e) { document.getElementById('freelancer-grid').innerHTML=`<div class="empty">❌ ${e.message}</div>`; }
+  } catch (e) { document.getElementById('freelancer-grid').innerHTML = `<div class="empty">❌ ${e.message}</div>`; }
 }
+
 function renderFreelancers(list) {
-  const el=document.getElementById('freelancer-grid');
-  if (!list.length) { el.innerHTML='<div class="empty">No freelancers found 🌸</div>'; return; }
-  el.innerHTML=list.map(f=>{
-    const skills=Array.isArray(f.skills)?f.skills:(f.skills||'').split(',').map(s=>s.trim()).filter(Boolean);
+  const el = document.getElementById('freelancer-grid');
+  if (!list.length) { el.innerHTML = '<div class="empty">No freelancers found 🌸</div>'; return; }
+  el.innerHTML = list.map(f => {
+    const skills = Array.isArray(f.skills) ? f.skills : (f.skills || '').split(',').map(s => s.trim()).filter(Boolean);
     return `<div class="freelancer-card">
       <div class="freelancer-name">💕 ${f.name}</div>
-      <div class="freelancer-location">📍 ${f.location||'Unknown'} &nbsp;|&nbsp; ID:${f.id}</div>
-      <div class="skill-tags">${skills.map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>
-      <div style="margin-top:10px;font-size:12px;color:#c084a0">✅ ${f.jobs_completed||0} completed &nbsp;|&nbsp; 📋 ${f.jobs_applied||0} applied</div>
+      <div class="freelancer-location">📍 ${f.location || 'Unknown'} &nbsp;|&nbsp; ID:${f.id}</div>
+      <div class="skill-tags">${skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}</div>
+      <div style="margin-top:10px;font-size:12px;color:#c084a0">✅ ${f.jobs_completed || 0} completed &nbsp;|&nbsp; 📋 ${f.jobs_applied || 0} applied</div>
     </div>`;
   }).join('');
 }
+
 function filterFreelancers() {
-  const q=document.getElementById('freelancer-search').value.toLowerCase();
-  renderFreelancers(allFreelancers.filter(f=>{
-    const s=Array.isArray(f.skills)?f.skills.join(','):(f.skills||'');
-    return f.name.toLowerCase().includes(q)||s.toLowerCase().includes(q);
+  const q = document.getElementById('freelancer-search').value.toLowerCase();
+  renderFreelancers(allFreelancers.filter(f => {
+    const s = Array.isArray(f.skills) ? f.skills.join(',') : (f.skills || '');
+    return f.name.toLowerCase().includes(q) || s.toLowerCase().includes(q);
   }));
 }
 
@@ -880,7 +957,7 @@ function filterFreelancers() {
 try {
   const saved = localStorage.getItem('trustgig_user');
   if (saved) { currentUser = JSON.parse(saved); initApp(); }
-} catch(e) {
+} catch (e) {
   localStorage.removeItem('trustgig_user');
 }
 </script>
