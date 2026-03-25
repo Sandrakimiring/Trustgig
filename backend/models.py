@@ -15,7 +15,7 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 
 
-git class User(Base):
+class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -102,7 +102,8 @@ class Match(Base):
     job = relationship("Job", back_populates="matches")
     freelancer = relationship("User", back_populates="matches")
 
-    class Delivery(Base):
+
+class Delivery(Base):
     __tablename__ = "deliveries"
     id            = Column(Integer, primary_key=True)
     job_id        = Column(Integer)
