@@ -12,7 +12,6 @@ from services.sms_service import (
     send_mpesa_disbursement,
     send_sms,
 )
-import models
 
 Base.metadata.create_all(bind=engine)
 
@@ -23,6 +22,7 @@ from typing import List, Optional
 from pydantic import BaseModel, validator
 import httpx
 import re
+from datetime import datetime
 
 # ══════════════════════════════════════════════════════════════════════════════
 # APP SETUP
@@ -42,8 +42,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ML service lives at https://trustgig.onrender.com (separate Render service)
+# Backend API lives at https://trustgig-backend.onrender.com
 MATCHER_URL  = os.getenv("MATCHER_SERVICE_URL", "https://trustgig.onrender.com")
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8000")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://trustgig-frontend.onrender.com")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -524,19 +526,16 @@ def approve_delivery(job_id: int, db: Session = Depends(get_db)):
             phone=freelancer.phone, name=freelancer.name,
             amount=float(job.budget), job_title=job.title,
         )
-        # ✅ Fix #8 — explicit "approved" SMS separate from payment SMS
+        # Approval + payment confirmation SMS (single message)
         send_sms(freelancer.phone,
             f"Work Approved! 🎉\n"
             f"Hi {freelancer.name}, your delivery for\n"
             f"'{job.title}' was approved.\n\n"
             f"KES {int(job.budget):,} M-Pesa payment is on its way!"
         )
-        send_payment_released_sms(
-            phone=freelancer.phone, name=freelancer.name,
-            amount=float(job.budget), job_title=job.title,
-        )
         print(f"[Payment] M-Pesa + SMS → {freelancer.name}")
         freelancer.jobs_completed = (freelancer.jobs_completed or 0) + 1
+        freelancer.last_completed = datetime.utcnow()   # ✅ fixes reliability scoring
         db.commit()
 
     return {"message": "Delivery approved and payment released", "job_id": job_id}

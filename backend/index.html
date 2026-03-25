@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TrustGig Platform</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'Segoe UI',sans-serif; background:#1a0a14; color:#f5e6ef; min-height:100vh; }
@@ -212,12 +213,16 @@ tr:hover td { background:#3d152844; }
     <p class="subtitle">Fund jobs and release payments to freelancers via M-Pesa</p>
     <div class="card-grid">
       <div class="card">
-        <h2>💰 Fund Escrow</h2>
+      <h2>💰 Fund Escrow</h2>
         <div id="alert-fund" class="alert"></div>
-        <div class="form-group"><label>Select Job</label><select id="fund-job-id"></select></div>
+        <div class="form-group"><label>Select Job</label><select id="fund-job-id" onchange="loadApplicantsForFund()"></select></div>
+        <div class="form-group">
+          <label>Select Freelancer to Hire</label>
+          <select id="fund-freelancer-id"><option value="">— select a job first —</option></select>
+        </div>
         <div class="form-group"><label>Amount (KES)</label><input type="number" id="fund-amount" placeholder="e.g. 8000"></div>
         <button class="btn btn-secondary" onclick="fundEscrow()">💰 Fund Escrow</button>
-        <p class="hint">📱 Freelancer gets SMS to start work</p>
+        <p class="hint">📱 Hired freelancer gets SMS to start work</p>
       </div>
       <div class="card">
         <h2>🚀 Release Payment</h2>
@@ -578,16 +583,47 @@ async function loadEscrowDropdowns() {
 
 async function fundEscrow() {
   const job_id=parseInt(document.getElementById('fund-job-id').value);
+  const freelancer_id=parseInt(document.getElementById('fund-freelancer-id').value);
   const amount=parseFloat(document.getElementById('fund-amount').value);
-  if (!job_id||!amount) { showAlert('alert-fund','Please select a job and enter amount','error'); return; }
+  if (!job_id) { showAlert('alert-fund','Please select a job','error'); return; }
+  if (!freelancer_id) { showAlert('alert-fund','Please select a freelancer to hire','error'); return; }
+  if (!amount) { showAlert('alert-fund','Please enter an amount','error'); return; }
   try {
-    await apiCall('POST','/escrow/fund',{job_id,amount});
-    showAlert('alert-fund',`✅ Escrow of KES ${amount.toLocaleString()} funded! Freelancer notified 📱`,'success');
+    const result = await apiCall('POST','/escrow/fund',{job_id, freelancer_id, amount});
+    showAlert('alert-fund',`✅ Escrow of KES ${amount.toLocaleString()} funded! ${result.freelancer_name} notified via SMS 📱`,'success');
     loadEscrow(); loadEscrowDropdowns();
   } catch(e) { showAlert('alert-fund',`❌ ${e.message}`,'error'); }
 }
 
-async function quickFund(job_id,budget) { document.getElementById('fund-job-id').value=job_id; document.getElementById('fund-amount').value=budget; await fundEscrow(); }
+async function loadApplicantsForFund() {
+  const job_id = parseInt(document.getElementById('fund-job-id').value);
+  const sel = document.getElementById('fund-freelancer-id');
+  sel.innerHTML = '<option value="">Loading...</option>';
+  if (!job_id) { sel.innerHTML='<option value="">— select a job first —</option>'; return; }
+  try {
+    const data = await apiCall('GET', `/jobs/${job_id}/applications`);
+    const apps = data.applications || [];
+    if (!apps.length) {
+      sel.innerHTML='<option value="">No applicants yet</option>';
+    } else {
+      sel.innerHTML = apps.map(a=>`<option value="${a.freelancer_id}">${a.name} (${(a.score*100).toFixed(0)}% match)</option>`).join('');
+    }
+    // also pre-fill the amount from job budget
+    const job = await apiCall('GET', `/jobs/${job_id}`).catch(()=>null);
+    if (job) document.getElementById('fund-amount').value = job.budget;
+  } catch(e) {
+    sel.innerHTML='<option value="">Could not load applicants</option>';
+  }
+}
+
+async function quickFund(job_id,budget) {
+  showPage('escrow', document.querySelectorAll('.nav-tab')[3]);
+  setTimeout(async ()=>{
+    document.getElementById('fund-job-id').value=job_id;
+    document.getElementById('fund-amount').value=budget;
+    await loadApplicantsForFund();
+  },400);
+}
 
 async function releasePayment() {
   const job_id=parseInt(document.getElementById('release-job-id').value);
@@ -655,8 +691,8 @@ async function applyToJobById(jobId) {
   if (!confirm(`Apply for Job #${jobId}?`)) return;
   try {
     const data = await apiCall('POST', `/jobs/${jobId}/apply`, { freelancer_id: currentUser.id });
-    alert(`✅ Applied successfully! Match score: ${data.match_score}. Client notified!`);
-    loadMyMatches(); 
+    alert(`✅ ${data.message || 'Applied!'} Client has been notified!`);
+    loadMyMatches();
   } catch(e) {
     alert(`❌ Failed to apply: ${e.message}`);
   }

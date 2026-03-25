@@ -4,6 +4,9 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from database import Base
 
+# NOTE: skills columns use ARRAY(Text) — never pass a raw JSON string to these;
+#       always pass a Python list e.g. ["python", "ml"]
+
 
 class User(Base):
     __tablename__ = "users"
@@ -13,7 +16,7 @@ class User(Base):
     phone          = Column(String, unique=True, nullable=False)
     role           = Column(String, nullable=False)          # "client" | "freelancer"
     password_hash  = Column(String, nullable=True)
-    skills         = Column(ARRAY(String), default=[])
+    skills         = Column(ARRAY(Text), default=[])
     experience     = Column(String, nullable=True)
     location       = Column(String, nullable=True)
     jobs_applied   = Column(Integer, default=0)
@@ -30,7 +33,7 @@ class Job(Base):
     client_id              = Column(Integer, ForeignKey("users.id"), nullable=False)
     title                  = Column(String, nullable=False)
     description            = Column(Text, nullable=True)
-    skills_required        = Column(ARRAY(String), default=[])
+    skills_required        = Column(ARRAY(Text), default=[])
     budget                 = Column(Float, nullable=False)
     status                 = Column(String, default="open")   # open | in_progress | completed
     # ✅ tracks exactly who was hired — fixes escrow/release/approve guessing
@@ -46,13 +49,14 @@ class Job(Base):
 class Match(Base):
     __tablename__ = "matches"
 
-    id            = Column(Integer, primary_key=True, index=True)
-    job_id        = Column(Integer, ForeignKey("jobs.id"), nullable=False)
-    freelancer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    score         = Column(Float, default=0.0)
-    final_score   = Column(Float, default=0.0)
-    sms_sent      = Column(Boolean, default=False)
-    matched_at    = Column(DateTime, default=datetime.utcnow)
+    id               = Column(Integer, primary_key=True, index=True)
+    job_id           = Column(Integer, ForeignKey("jobs.id"), nullable=False)
+    freelancer_id    = Column(Integer, ForeignKey("users.id"), nullable=False)
+    score            = Column(Float, default=0.0)
+    final_score      = Column(Float, default=0.0)
+    similarity_score = Column(Float, nullable=True)   # written by ML service
+    sms_sent         = Column(Boolean, default=False)
+    matched_at       = Column(DateTime, default=datetime.utcnow)
 
     job        = relationship("Job",  back_populates="matches")
     freelancer = relationship("User", back_populates="matches")
@@ -69,8 +73,8 @@ class Delivery(Base):
     status        = Column(String, default="pending")   # pending | approved | rejected
     delivered_at  = Column(DateTime, default=datetime.utcnow)
 
-    job        = relationship("Job",  back_populates="deliveries")
-    freelancer = relationship("User")
+    job        = relationship("Job",  back_populates="deliveries", foreign_keys="[Delivery.job_id]")
+    freelancer = relationship("User", foreign_keys="[Delivery.freelancer_id]")
 
 
 # ── kept for backwards-compat if your matcher service uses these schemas ──────
@@ -79,7 +83,7 @@ class MatchRequest(Base):
 
     id         = Column(Integer, primary_key=True, index=True)
     job_id     = Column(Integer, ForeignKey("jobs.id"))
-    skills     = Column(ARRAY(String), default=[])
+    skills     = Column(ARRAY(Text), default=[])
     budget     = Column(Float)
     created_at = Column(DateTime, default=datetime.utcnow)
 

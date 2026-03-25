@@ -24,7 +24,7 @@ def get_top_matches(job_id, job_skills, db, top_n=3):
         reliability = compute_reliability(
             jobs_applied=f.jobs_applied or 0,
             jobs_completed=f.jobs_completed or 0,
-            last_completed=f.last_completed
+            last_completed=None   # last_completed not tracked in backend User model
         )
         final_score = compute_final_score(similarity, reliability)
         results.append({
@@ -43,7 +43,8 @@ def save_matches_to_db(job_id, matches, db):
         db_match = Match(
             job_id=job_id,
             freelancer_id=match["freelancer_id"],
-            similarity_score=match["similarity"],
+            score=match["final_score"],
+            similarity_score=match.get("similarity"),
             final_score=match["final_score"],
             sms_sent=match.get("sms_sent", False),
         )
