@@ -319,6 +319,7 @@ def create_job(job: JobCreate, db: Session = Depends(get_db)):
                 db.add(Match(
                     job_id=db_job.id,
                     freelancer_id=m["freelancer_id"],
+                    score=m["score"],
                     final_score=m["score"],
                     sms_sent=m.get("sms_sent", False),
                 ))
@@ -380,6 +381,7 @@ def apply_to_job(job_id: int, payload: ApplicationCreate, db: Session = Depends(
     match = Match(
         job_id=job_id,
         freelancer_id=payload.freelancer_id,
+        score=0.0,
         final_score=0.0,   # no ML score for direct apply; client sees them anyway
         sms_sent=False,
     )

@@ -49,7 +49,7 @@ class Match(Base):
     id            = Column(Integer, primary_key=True, index=True)
     job_id        = Column(Integer, ForeignKey("jobs.id"), nullable=False)
     freelancer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    # ✅ similarity_score removed — was always 0.0 and caused the DB column error
+    score         = Column(Float, default=0.0)
     final_score   = Column(Float, default=0.0)
     sms_sent      = Column(Boolean, default=False)
     matched_at    = Column(DateTime, default=datetime.utcnow)
