@@ -250,6 +250,13 @@ tr:hover td { background:#3d152844; }
     <div id="browse-jobs-list"><div class="empty"><span class="spinner"></span>Loading...</div></div>
   </div>
 
+  <!-- FREELANCER: MY APPLICATIONS -->
+  <div id="page-myapplications" class="page">
+    <h1>📋 My Applications</h1>
+    <p class="subtitle">Jobs you've applied to — submit your work here once hired</p>
+    <div id="my-applications-list"><div class="empty"><span class="spinner"></span>Loading...</div></div>
+  </div>
+
   <!-- SHARED: FREELANCERS -->
   <div id="page-freelancers" class="page">
     <h1>👥 Freelancer Directory</h1>
@@ -364,6 +371,7 @@ function initApp() {
     document.getElementById('nav-tabs').innerHTML = `
       <button class="nav-tab active" onclick="showPage('overview',this)">📊 Overview</button>
       <button class="nav-tab" onclick="showPage('mymatches',this)">🤖 My Matches</button>
+      <button class="nav-tab" onclick="showPage('myapplications',this)">📋 My Applications</button>
       <button class="nav-tab" onclick="showPage('browsejobs',this)">💼 Browse Jobs</button>
       <button class="nav-tab" onclick="showPage('freelancers',this)">👥 Freelancers</button>`;
     loadOverview();
@@ -381,6 +389,7 @@ function showPage(name, btn) {
   if (name==='escrow') { loadEscrow(); loadEscrowDropdowns(); }
   if (name==='freelancers') loadFreelancers();
   if (name==='mymatches') loadMyMatches();
+  if (name==='myapplications') loadMyApplications();
   if (name==='browsejobs') loadBrowseJobs();
 }
 
@@ -487,8 +496,20 @@ async function loadDeliveryForClient(jobId) {
         </div>` : ''}
       </div>`;
   } catch(e) {
-    // No delivery yet — that's fine, don't show anything
-    el.innerHTML = '';
+    // No delivery yet — show a waiting state to the client
+    const job = await apiCall('GET', `/jobs/${jobId}`).catch(() => null);
+    if (job && job.status === 'in_progress') {
+      el.innerHTML = `
+        <div class="delivery-box" style="border-color:#4a2010">
+          <h4 style="color:#fdba74">⏳ Awaiting Work Delivery</h4>
+          <p style="font-size:13px;color:#c084a0;margin-top:4px">
+            The freelancer has been notified and is working on this job. 
+            This section will update automatically once they submit their work.
+          </p>
+        </div>`;
+    } else {
+      el.innerHTML = '';
+    }
   }
 }
 
@@ -610,8 +631,8 @@ async function loadMyMatches() {
       } catch(e) {
         // No delivery yet — show form if job is in progress
         const jobStatus = job ? job.status : '';
-        deliverySection = jobStatus === 'in_progress' || jobStatus === 'open'
-          ? `<div class="delivery-box"><h4>📤 Submit Your Work</h4>${deliverForm(m.job_id)}</div>`
+        deliverySection = (jobStatus === 'in_progress' || jobStatus === 'open')
+          ? `<div class="delivery-box"><h4>📤 Submit Your Work</h4>${jobStatus === 'in_progress' ? '<p style="font-size:12px;color:#4ade80;margin-bottom:10px">✅ You\'ve been hired! Submit your completed work below.</p>' : '<p style="font-size:12px;color:#c084a0;margin-bottom:10px">⏳ You can pre-submit your work — client will review after funding.</p>'}${deliverForm(m.job_id)}</div>`
           : '';
       }
 
@@ -665,6 +686,90 @@ async function deliverWork(job_id) {
     alert('✅ Work submitted! Client has been notified via SMS 📱\n\nThey will review and release your payment once approved.');
     loadMyMatches();
   } catch(e) { alert(`❌ ${e.message}`); }
+}
+
+// ── Freelancer: My Applications ───────────────────────────────────────────────
+async function loadMyApplications() {
+  const el = document.getElementById('my-applications-list');
+  el.innerHTML = '<div class="empty"><span class="spinner"></span>Loading...</div>';
+  try {
+    // Get all jobs, then filter to ones this freelancer has a match record for
+    const jobs = await apiCall('GET', '/jobs');
+    if (!jobs.length) { el.innerHTML = '<div class="empty">No jobs found 🌸</div>'; return; }
+
+    // Check each job for this freelancer's match record (application)
+    const applied = [];
+    await Promise.all(jobs.map(async j => {
+      try {
+        const data = await apiCall('GET', `/match/${j.id}`);
+        const myMatch = (data.matches||[]).find(m => m.freelancer_id === currentUser.id);
+        if (myMatch) applied.push({ job: j, match: myMatch });
+      } catch(e) {}
+    }));
+
+    if (!applied.length) {
+      el.innerHTML = '<div class="empty">You haven\'t applied to any jobs yet. Go to 💼 Browse Jobs to apply! 🌸</div>';
+      return;
+    }
+
+    // Sort: in_progress first, then open, then completed
+    const order = { in_progress: 0, open: 1, completed: 2 };
+    applied.sort((a, b) => (order[a.job.status] ?? 9) - (order[b.job.status] ?? 9));
+
+    const cards = await Promise.all(applied.map(async ({ job: j, match: myMatch }) => {
+      let deliverySection = '';
+      try {
+        const delivery = await apiCall('GET', `/jobs/${j.id}/delivery`);
+        const isMyDelivery = delivery.freelancer_id === currentUser.id;
+        if (isMyDelivery) {
+          deliverySection = `
+            <div class="delivery-box">
+              <h4>📤 Work Submitted</h4>
+              <p style="font-size:12px;color:#c084a0;margin-bottom:6px">Status: ${statusBadge(delivery.status)}</p>
+              <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">🔗 ${delivery.delivery_link}</a>
+              ${delivery.status === 'rejected' ? `
+                <p style="font-size:12px;color:#f87171;margin:8px 0">⚠️ Client requested revisions. Please resubmit below.</p>
+                ${deliverForm(j.id)}` : ''}
+            </div>`;
+        }
+      } catch(e) {
+        // No delivery yet
+        if (j.status === 'in_progress') {
+          deliverySection = `
+            <div class="delivery-box">
+              <h4>📤 Submit Your Work</h4>
+              <p style="font-size:12px;color:#4ade80;margin-bottom:10px">✅ You've been hired! Upload your completed work below.</p>
+              ${deliverForm(j.id)}
+            </div>`;
+        } else if (j.status === 'open') {
+          deliverySection = `<p style="font-size:12px;color:#c084a0;margin-top:8px">⏳ Waiting for client to fund escrow and confirm you...</p>`;
+        }
+      }
+
+      return `
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
+            <div>
+              <h3>#${j.id} — ${j.title}</h3>
+              <p style="font-size:13px;color:#c084a0;margin-top:4px">${j.description||''}</p>
+            </div>
+            ${statusBadge(j.status)}
+          </div>
+          <p style="font-size:13px;color:#c084a0;margin-bottom:10px">
+            💰 KES ${Number(j.budget).toLocaleString()}
+            &nbsp;|&nbsp; Match Score: <strong style="color:#f472b6">${(myMatch.score*100).toFixed(0)}%</strong>
+          </p>
+          <div class="match-score-bar" style="margin-bottom:12px">
+            <div class="match-score-fill" style="width:${myMatch.score*100}%"></div>
+          </div>
+          ${deliverySection}
+        </div>`;
+    }));
+
+    el.innerHTML = cards.join('');
+  } catch(e) {
+    el.innerHTML = `<div class="empty">❌ ${e.message}</div>`;
+  }
 }
 
 // ── Freelancer: Browse Jobs ───────────────────────────────────────────────────
