@@ -1,6 +1,9 @@
 import sys, os, hashlib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from ai_routes import router as ai_router
+app.include_router(ai_router, prefix="/ai", tags=["AI Features"])
+
 from database import get_db, engine, Base
 from models import User, Job, Match, Delivery, MatchRequest, MatchResult
 from services.sms_service import (
@@ -23,20 +26,16 @@ from typing import List, Optional
 from pydantic import BaseModel
 import httpx
 
-# ══════════════════════════════════════════════════════════════════════════════
-# APP SETUP
-# ══════════════════════════════════════════════════════════════════════════════
-
 app = FastAPI(
     title="TrustGig Platform API",
-    description="AI-powered freelance marketplace — Engineer A backend",
-    version="2.0.0",
+    description="AI-powered freelance marketplace",
+    version="3.0.0",
 )
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,  # ✅ fixed — cannot use * with True
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -45,9 +44,40 @@ MATCHER_URL  = os.getenv("MATCHER_SERVICE_URL", "https://trustgig.onrender.com")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8000")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# SCHEMAS
-# ══════════════════════════════════════════════════════════════════════════════
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+def normalize_phone(phone: str) -> str:
+    phone = phone.strip().replace(" ", "").replace("-", "")
+    if phone.startswith("+254"):
+        return phone
+    if phone.startswith("254"):
+        return f"+{phone}"
+    if phone.startswith("07") or phone.startswith("01"):
+        return f"+254{phone[1:]}"
+    if phone.startswith("7") or phone.startswith("1"):
+        return f"+254{phone}"
+    return phone
+
+
+def get_assigned_freelancer(job, db: Session):
+    if job.assigned_freelancer_id:
+        return db.query(User).filter(User.id == job.assigned_freelancer_id).first()
+    top_match = (
+        db.query(Match)
+        .filter(Match.job_id == job.id)
+        .order_by(Match.final_score.desc())
+        .first()
+    )
+    if top_match:
+        return db.query(User).filter(User.id == top_match.freelancer_id).first()
+    return None
+
+
+# ── Schemas ───────────────────────────────────────────────────────────────────
 
 class UserCreate(BaseModel):
     name: str
@@ -87,6 +117,7 @@ class ApplicationCreate(BaseModel):
 class EscrowFund(BaseModel):
     job_id: int
     amount: float
+    freelancer_id: int  # ✅ who the client is hiring
 
 class EscrowRelease(BaseModel):
     job_id: int
@@ -101,30 +132,18 @@ class WorkDelivery(BaseModel):
     message: str
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# HELPERS
-# ══════════════════════════════════════════════════════════════════════════════
-
-def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# HEALTH
-# ══════════════════════════════════════════════════════════════════════════════
+# ── Health ────────────────────────────────────────────────────────────────────
 
 @app.get("/", tags=["Health"])
 def root():
-    return {"service": "TrustGig Platform API", "version": "2.0.0", "status": "running", "docs": "/docs"}
+    return {"service": "TrustGig Platform API", "version": "3.0.0", "status": "running", "docs": "/docs"}
 
 @app.get("/health", tags=["Health"])
 def health():
-    return {"status": "ok", "service": "TrustGig Engineer A", "port": 8000}
+    return {"status": "ok"}
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# AUTH
-# ══════════════════════════════════════════════════════════════════════════════
+# ── Auth ──────────────────────────────────────────────────────────────────────
 
 @app.post("/signup", status_code=201, tags=["Auth"])
 def signup(user: UserSignup, db: Session = Depends(get_db)):
@@ -133,7 +152,7 @@ def signup(user: UserSignup, db: Session = Depends(get_db)):
     if user.role not in ("client", "freelancer"):
         raise HTTPException(status_code=400, detail="Role must be client or freelancer")
     db_user = User(
-        name=user.name, phone=user.phone, role=user.role,
+        name=user.name, phone=normalize_phone(user.phone), role=user.role,
         password_hash=hash_password(user.password),
         skills=user.skills.split(",") if user.skills else [],
         experience=user.experience, location=user.location,
@@ -142,12 +161,15 @@ def signup(user: UserSignup, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    print(f"[Auth] New {user.role} signed up: {user.name} ({user.phone})")
     return {"message": "Account created successfully", "id": db_user.id, "name": db_user.name, "role": db_user.role, "phone": db_user.phone}
 
 @app.post("/login", tags=["Auth"])
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.phone == credentials.phone).first()
+    normalized = normalize_phone(credentials.phone)
+    user = (
+        db.query(User).filter(User.phone == normalized).first()
+        or db.query(User).filter(User.phone == credentials.phone).first()
+    )
     if not user:
         raise HTTPException(status_code=401, detail="Phone number not registered")
     if not user.password_hash:
@@ -155,7 +177,6 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
     if user.password_hash != hash_password(credentials.password):
         raise HTTPException(status_code=401, detail="Incorrect password")
     skills = user.skills if isinstance(user.skills, list) else (user.skills or "").split(",")
-    print(f"[Auth] Login: {user.name} ({user.role})")
     return {
         "message": "Login successful", "id": user.id, "name": user.name,
         "role": user.role, "phone": user.phone, "skills": skills,
@@ -173,7 +194,7 @@ def get_profile(user_id: int, db: Session = Depends(get_db)):
         return {
             "id": user.id, "name": user.name, "role": user.role,
             "phone": user.phone, "location": user.location,
-            "jobs": [{"id":j.id,"title":j.title,"budget":float(j.budget),"status":j.status} for j in jobs]
+            "jobs": [{"id":j.id,"title":j.title,"budget":float(j.budget),"status":j.status,"assigned_freelancer_id":j.assigned_freelancer_id} for j in jobs]
         }
     else:
         matches = db.query(Match).filter(Match.freelancer_id == user_id).all()
@@ -185,16 +206,14 @@ def get_profile(user_id: int, db: Session = Depends(get_db)):
         }
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# USERS
-# ══════════════════════════════════════════════════════════════════════════════
+# ── Users ─────────────────────────────────────────────────────────────────────
 
 @app.post("/users", status_code=201, tags=["Users"])
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     if db.query(User).filter(User.phone == user.phone).first():
         raise HTTPException(status_code=400, detail="Phone already registered")
     db_user = User(
-        name=user.name, phone=user.phone, role=user.role,
+        name=user.name, phone=normalize_phone(user.phone), role=user.role,
         skills=user.skills.split(",") if user.skills else [],
         experience=user.experience, location=user.location,
         jobs_applied=user.jobs_applied, jobs_completed=user.jobs_completed,
@@ -219,9 +238,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     return user
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# JOBS
-# ══════════════════════════════════════════════════════════════════════════════
+# ── Jobs ──────────────────────────────────────────────────────────────────────
 
 @app.post("/jobs", status_code=201, tags=["Jobs"])
 def create_job(job: JobCreate, db: Session = Depends(get_db)):
@@ -238,14 +255,12 @@ def create_job(job: JobCreate, db: Session = Depends(get_db)):
     db.add(db_job)
     db.commit()
     db.refresh(db_job)
-    print(f"\n[Jobs] New job: '{db_job.title}' (ID:{db_job.id}) by {client.name}")
     try:
         response = httpx.post(
             f"{MATCHER_URL}/match",
             json={"job_id": db_job.id, "skills": skills_list, "budget": float(job.budget)},
             timeout=60.0,
         )
-        print(f"[Matcher] Response: {response.status_code}")
         if response.status_code == 200:
             matches = response.json()
             for m in matches:
@@ -255,9 +270,8 @@ def create_job(job: JobCreate, db: Session = Depends(get_db)):
             for m in matches:
                 freelancer = db.query(User).filter(User.id == m["freelancer_id"]).first()
                 if freelancer and freelancer.phone:
-                    ok = send_match_sms(phone=freelancer.phone, job_title=db_job.title,
-                                        budget=float(db_job.budget), score=m["score"], job_id=db_job.id)
-                    print(f"[SMS] {'✅' if ok else '❌'} → {freelancer.name}")
+                    send_match_sms(phone=freelancer.phone, job_title=db_job.title,
+                                   budget=float(db_job.budget), score=m["score"], job_id=db_job.id)
     except Exception as e:
         print(f"[Matcher] Failed: {e}")
     return db_job
@@ -277,9 +291,7 @@ def get_job(job_id: int, db: Session = Depends(get_db)):
     return job
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# APPLICATIONS
-# ══════════════════════════════════════════════════════════════════════════════
+# ── Applications ──────────────────────────────────────────────────────────────
 
 @app.post("/jobs/{job_id}/apply", status_code=201, tags=["Applications"])
 def apply_to_job(job_id: int, payload: ApplicationCreate, db: Session = Depends(get_db)):
@@ -293,46 +305,53 @@ def apply_to_job(job_id: int, payload: ApplicationCreate, db: Session = Depends(
         raise HTTPException(status_code=404, detail="Freelancer not found")
     if freelancer.role != "freelancer":
         raise HTTPException(status_code=400, detail="Only freelancers can apply")
-    match = db.query(Match).filter(Match.job_id == job_id, Match.freelancer_id == payload.freelancer_id).first()
-    score = float(match.final_score) if match else 0.0
+
+##this is where I want to add rteh AI intergrations code
+
+    # prevent duplicate applications
+    existing = db.query(Match).filter(
+        Match.job_id == job_id, Match.freelancer_id == payload.freelancer_id
+    ).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="You have already applied to this job")
+
+    # always create a Match row so applicant is visible to client
+    match = Match(job_id=job_id, freelancer_id=payload.freelancer_id,
+                  similarity_score=0.0, final_score=0.0, sms_sent=False)
+    db.add(match)
+    freelancer.jobs_applied = (freelancer.jobs_applied or 0) + 1
+    db.commit()
+
     client = db.query(User).filter(User.id == job.client_id).first()
     if client and client.phone:
         ok = send_application_sms_to_client(
             phone=client.phone, client_name=client.name,
             freelancer_name=freelancer.name, job_title=job.title,
-            job_id=job_id, score=score)
+            job_id=job_id, score=0.0)
         print(f"[SMS] {'✅' if ok else '❌'} Application SMS → {client.name}")
     return {"message": f"{freelancer.name} applied to '{job.title}'", "job_id": job_id,
-            "freelancer_id": payload.freelancer_id, "match_score": f"{int(score*100)}%", "status": "pending"}
+            "freelancer_id": payload.freelancer_id, "status": "pending"}
 
 @app.get("/jobs/{job_id}/applications", tags=["Applications"])
 def get_applications(job_id: int, db: Session = Depends(get_db)):
     matches = db.query(Match).filter(Match.job_id == job_id).all()
-    return {"job_id": job_id, "total": len(matches), "applications": matches}
-
-@app.post("/jobs/{job_id}/done", tags=["Applications"])
-def mark_job_done(job_id: int, payload: MarkDone, db: Session = Depends(get_db)):
-    job = db.query(Job).filter(Job.id == job_id).first()
-    if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
-    freelancer = db.query(User).filter(User.id == payload.freelancer_id).first()
-    client = db.query(User).filter(User.id == job.client_id).first()
-    if client and client.phone and freelancer:
-        ok = send_work_done_sms_to_client(
-            phone=client.phone, client_name=client.name,
-            freelancer_name=freelancer.name, job_title=job.title,
-            amount=float(job.budget), job_id=job_id)
-        print(f"[SMS] {'✅' if ok else '❌'} Work done SMS → {client.name}")
-    return {"message": f"Client notified — work done for job #{job_id}"}
+    result = []
+    for m in matches:
+        f = db.query(User).filter(User.id == m.freelancer_id).first()
+        result.append({
+            "freelancer_id": m.freelancer_id, "name": f.name if f else "Unknown",
+            "phone": f.phone if f else "", "skills": f.skills if f else [],
+            "score": float(m.final_score), "score_pct": f"{int(m.final_score*100)}%",
+            "sms_sent": m.sms_sent,
+        })
+    result.sort(key=lambda x: x["score"], reverse=True)
+    return {"job_id": job_id, "total": len(result), "applications": result}
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# WORK DELIVERY
-# ══════════════════════════════════════════════════════════════════════════════
+# ── Delivery ──────────────────────────────────────────────────────────────────
 
 @app.post("/jobs/{job_id}/deliver", status_code=201, tags=["Delivery"])
 def deliver_work(job_id: int, payload: WorkDelivery, db: Session = Depends(get_db)):
-    """Freelancer submits work link + message — client gets SMS."""
     job = db.query(Job).filter(Job.id == job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
@@ -340,14 +359,20 @@ def deliver_work(job_id: int, payload: WorkDelivery, db: Session = Depends(get_d
     if not freelancer:
         raise HTTPException(status_code=404, detail="Freelancer not found")
 
-    delivery = Delivery(
-        job_id=job_id, freelancer_id=payload.freelancer_id,
-        delivery_link=payload.delivery_link, message=payload.message, status="pending",
-    )
-    db.add(delivery)
+    # upsert — allow resubmission after rejection
+    delivery = db.query(Delivery).filter(Delivery.job_id == job_id).first()
+    if delivery:
+        delivery.delivery_link = payload.delivery_link
+        delivery.message = payload.message
+        delivery.status = "pending"
+    else:
+        delivery = Delivery(
+            job_id=job_id, freelancer_id=payload.freelancer_id,
+            delivery_link=payload.delivery_link, message=payload.message, status="pending",
+        )
+        db.add(delivery)
     db.commit()
     db.refresh(delivery)
-    print(f"[Delivery] Job #{job_id} — {freelancer.name} submitted work")
 
     client = db.query(User).filter(User.id == job.client_id).first()
     if client and client.phone:
@@ -361,14 +386,12 @@ def deliver_work(job_id: int, payload: WorkDelivery, db: Session = Depends(get_d
             f"Login to approve & pay:\n"
             f"{FRONTEND_URL}/index.html"
         )
-        ok = send_sms(client.phone, msg)
-        print(f"[SMS] {'✅' if ok else '❌'} Delivery SMS → {client.name} ({client.phone})")
+        send_sms(client.phone, msg)
 
     return {"message": "Work delivered successfully", "job_id": job_id, "delivery_id": delivery.id, "status": "pending"}
 
 @app.get("/jobs/{job_id}/delivery", tags=["Delivery"])
 def get_delivery(job_id: int, db: Session = Depends(get_db)):
-    """Get delivery details for a job."""
     delivery = db.query(Delivery).filter(Delivery.job_id == job_id).first()
     if not delivery:
         raise HTTPException(status_code=404, detail="No delivery found for this job")
@@ -383,37 +406,36 @@ def get_delivery(job_id: int, db: Session = Depends(get_db)):
 
 @app.post("/jobs/{job_id}/approve", tags=["Delivery"])
 def approve_delivery(job_id: int, db: Session = Depends(get_db)):
-    """Client approves delivery — auto releases M-Pesa payment."""
     delivery = db.query(Delivery).filter(Delivery.job_id == job_id).first()
     if not delivery:
         raise HTTPException(status_code=404, detail="No delivery found")
+    if delivery.status == "approved":
+        raise HTTPException(status_code=400, detail="Already approved — payment already released")
     delivery.status = "approved"
     job = db.query(Job).filter(Job.id == job_id).first()
+    if job.status == "completed":
+        raise HTTPException(status_code=400, detail="Job already completed")
     job.status = "completed"
     db.commit()
-    print(f"[Delivery] Job #{job_id} approved")
 
-    top_match = db.query(Match).filter(Match.job_id == job_id).order_by(Match.final_score.desc()).first()
-    if top_match:
-        freelancer = db.query(User).filter(User.id == top_match.freelancer_id).first()
-        if freelancer and freelancer.phone:
-            send_mpesa_disbursement(phone=freelancer.phone, name=freelancer.name,
-                                    amount=float(job.budget), job_title=job.title)
-            send_payment_released_sms(phone=freelancer.phone, name=freelancer.name,
-                                      amount=float(job.budget), job_title=job.title)
-            print(f"[Payment] M-Pesa + SMS → {freelancer.name}")
+    freelancer = get_assigned_freelancer(job, db)
+    if freelancer and freelancer.phone:
+        send_mpesa_disbursement(phone=freelancer.phone, name=freelancer.name,
+                                amount=float(job.budget), job_title=job.title)
+        send_payment_released_sms(phone=freelancer.phone, name=freelancer.name,
+                                  amount=float(job.budget), job_title=job.title)
+        freelancer.jobs_completed = (freelancer.jobs_completed or 0) + 1
+        db.commit()
 
     return {"message": "Delivery approved and payment released", "job_id": job_id}
 
 @app.post("/jobs/{job_id}/reject", tags=["Delivery"])
 def reject_delivery(job_id: int, db: Session = Depends(get_db)):
-    """Client rejects delivery — freelancer gets SMS to revise."""
     delivery = db.query(Delivery).filter(Delivery.job_id == job_id).first()
     if not delivery:
         raise HTTPException(status_code=404, detail="No delivery found")
     delivery.status = "rejected"
     db.commit()
-
     job = db.query(Job).filter(Job.id == job_id).first()
     freelancer = db.query(User).filter(User.id == delivery.freelancer_id).first()
     if freelancer and freelancer.phone:
@@ -423,12 +445,10 @@ def reject_delivery(job_id: int, db: Session = Depends(get_db)):
             f"The client wants revisions for '{job.title}'.\n"
             f"Please update and resubmit.\n"
             f"Login: {FRONTEND_URL}/index.html")
-        print(f"[SMS] Rejection SMS → {freelancer.name}")
-
     return {"message": "Delivery rejected — freelancer notified", "job_id": job_id}
 
 
-
+# ── Matching ──────────────────────────────────────────────────────────────────
 
 @app.get("/match/{job_id}", tags=["Matching"])
 def get_matches(job_id: int, db: Session = Depends(get_db)):
@@ -448,40 +468,51 @@ def get_matches(job_id: int, db: Session = Depends(get_db)):
     return {"job_id": job_id, "total_matches": len(result), "matches": result}
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ESCROW & PAYMENTS
-# ══════════════════════════════════════════════════════════════════════════════
+# ── Escrow & Payments ─────────────────────────────────────────────────────────
 
 @app.post("/escrow/fund", status_code=201, tags=["Escrow"])
 def fund_escrow(payload: EscrowFund, db: Session = Depends(get_db)):
     job = db.query(Job).filter(Job.id == payload.job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
+    if job.status != "open":
+        raise HTTPException(status_code=400, detail=f"Job is already '{job.status}'")
+    freelancer = db.query(User).filter(User.id == payload.freelancer_id).first()
+    if not freelancer:
+        raise HTTPException(status_code=404, detail="Freelancer not found")
+
     job.status = "in_progress"
+    job.assigned_freelancer_id = payload.freelancer_id
     db.commit()
-    top_match = db.query(Match).filter(Match.job_id == payload.job_id).order_by(Match.final_score.desc()).first()
-    if top_match:
-        freelancer = db.query(User).filter(User.id == top_match.freelancer_id).first()
-        if freelancer and freelancer.phone:
-            send_escrow_funded_sms(phone=freelancer.phone, freelancer_name=freelancer.name,
-                                   job_title=job.title, amount=payload.amount, job_id=payload.job_id)
-            print(f"[SMS] Escrow funded SMS → {freelancer.name}")
-    return {"message": "Escrow funded", "job_id": payload.job_id, "amount": payload.amount, "status": "funded"}
+
+    if freelancer.phone:
+        send_escrow_funded_sms(phone=freelancer.phone, freelancer_name=freelancer.name,
+                               job_title=job.title, amount=payload.amount, job_id=payload.job_id)
+
+    client = db.query(User).filter(User.id == job.client_id).first()
+    if client and client.phone:
+        send_sms(client.phone,
+            f"Escrow Funded ✅\n"
+            f"Hi {client.name},\n"
+            f"KES {int(payload.amount):,} secured for '{job.title}'.\n"
+            f"{freelancer.name} has been notified to begin work.")
+
+    return {"message": "Escrow funded — freelancer notified", "job_id": payload.job_id,
+            "freelancer_id": payload.freelancer_id, "amount": payload.amount, "status": "funded"}
 
 @app.post("/escrow/release", tags=["Escrow"])
 def release_payment(payload: EscrowRelease, db: Session = Depends(get_db)):
     job = db.query(Job).filter(Job.id == payload.job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
+    if job.status == "completed":
+        raise HTTPException(status_code=400, detail="Payment already released")
     job.status = "completed"
     db.commit()
-    top_match = db.query(Match).filter(Match.job_id == payload.job_id).order_by(Match.final_score.desc()).first()
-    if top_match:
-        freelancer = db.query(User).filter(User.id == top_match.freelancer_id).first()
-        if freelancer and freelancer.phone:
-            send_mpesa_disbursement(phone=freelancer.phone, name=freelancer.name,
-                                    amount=float(job.budget), job_title=job.title)
-            send_payment_released_sms(phone=freelancer.phone, name=freelancer.name,
-                                      amount=float(job.budget), job_title=job.title)
-            print(f"[Payment] Released → {freelancer.name}")
+    freelancer = get_assigned_freelancer(job, db)
+    if freelancer and freelancer.phone:
+        send_mpesa_disbursement(phone=freelancer.phone, name=freelancer.name,
+                                amount=float(job.budget), job_title=job.title)
+        send_payment_released_sms(phone=freelancer.phone, name=freelancer.name,
+                                  amount=float(job.budget), job_title=job.title)
     return {"message": "Payment released", "job_id": payload.job_id, "status": "completed"}
