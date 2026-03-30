@@ -1,73 +1,98 @@
-from sqlalchemy import Column, Integer, String, Numeric, DateTime, JSON, Boolean
-from sqlalchemy.sql import func
-from pydantic import BaseModel
-from typing import List, Optional
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Text
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.orm import relationship
+from datetime import datetime
 from database import Base
+
+# NOTE: skills columns use ARRAY(Text) — never pass a raw JSON string to these;
+#       always pass a Python list e.g. ["python", "ml"]
 
 
 class User(Base):
     __tablename__ = "users"
+
     id             = Column(Integer, primary_key=True, index=True)
-    name           = Column(String)
-    phone          = Column(String)
-    role           = Column(String)
-    skills         = Column(JSON)
-    experience     = Column(String)
-    location       = Column(String)
-    jobs_completed = Column(Integer, default=0)
+    name           = Column(String, nullable=False)
+    phone          = Column(String, unique=True, nullable=False)
+    role           = Column(String, nullable=False)          # "client" | "freelancer"
+    password_hash  = Column(String, nullable=True)
+    skills         = Column(ARRAY(Text), default=[])
+    experience     = Column(String, nullable=True)
+    location       = Column(String, nullable=True)
     jobs_applied   = Column(Integer, default=0)
-    last_completed = Column(DateTime, nullable=True)
-    password_hash  = Column(String(200), nullable=True)
+    jobs_completed = Column(Integer, default=0)
+
+    jobs    = relationship("Job", foreign_keys="[Job.client_id]", back_populates="client")
+    matches = relationship("Match", back_populates="freelancer")
 
 
 class Job(Base):
     __tablename__ = "jobs"
-    id              = Column(Integer, primary_key=True)
-    client_id       = Column(Integer)
-    title           = Column(String)
-    description     = Column(String)
-    skills_required = Column(JSON)
-    budget          = Column(Numeric)
-    status          = Column(String, default="open")
+
+    id                     = Column(Integer, primary_key=True, index=True)
+    client_id              = Column(Integer, ForeignKey("users.id"), nullable=False)
+    title                  = Column(String, nullable=False)
+    description            = Column(Text, nullable=True)
+    skills_required        = Column(ARRAY(Text), default=[])
+    budget                 = Column(Float, nullable=False)
+    status                 = Column(String, default="open")   # open | in_progress | completed
+    # ✅ tracks exactly who was hired — fixes escrow/release/approve guessing
+    assigned_freelancer_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at             = Column(DateTime, default=datetime.utcnow)
+
+    client             = relationship("User", foreign_keys=[client_id], back_populates="jobs")
+    assigned_freelancer = relationship("User", foreign_keys=[assigned_freelancer_id])
+    matches            = relationship("Match",    back_populates="job")
+    deliveries         = relationship("Delivery", back_populates="job")
 
 
 class Match(Base):
     __tablename__ = "matches"
-    id               = Column(Integer, primary_key=True)
-    job_id           = Column(Integer)
-    freelancer_id    = Column(Integer)
-    similarity_score = Column(Numeric)
-    final_score      = Column(Numeric)
+
+    id               = Column(Integer, primary_key=True, index=True)
+    job_id           = Column(Integer, ForeignKey("jobs.id"), nullable=False)
+    freelancer_id    = Column(Integer, ForeignKey("users.id"), nullable=False)
+    score            = Column(Float, default=0.0)
+    final_score      = Column(Float, default=0.0)
+    similarity_score = Column(Float, nullable=True)   # written by ML service
     sms_sent         = Column(Boolean, default=False)
-    matched_at       = Column(DateTime, default=func.now())
+    matched_at       = Column(DateTime, default=datetime.utcnow)
+
+    job        = relationship("Job",  back_populates="matches")
+    freelancer = relationship("User", back_populates="matches")
 
 
 class Delivery(Base):
     __tablename__ = "deliveries"
-    id            = Column(Integer, primary_key=True)
-    job_id        = Column(Integer)
-    freelancer_id = Column(Integer)
-    delivery_link = Column(String(500))
-    message       = Column(String)
+
+    id            = Column(Integer, primary_key=True, index=True)
+    job_id        = Column(Integer, ForeignKey("jobs.id"), nullable=False)
+    freelancer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    delivery_link = Column(String, nullable=True)
+    message       = Column(Text, nullable=True)
     status        = Column(String, default="pending")   # pending | approved | rejected
-    delivered_at  = Column(DateTime, default=func.now())
+    delivered_at  = Column(DateTime, default=datetime.utcnow)
+
+    job        = relationship("Job",  back_populates="deliveries", foreign_keys="[Delivery.job_id]")
+    freelancer = relationship("User", foreign_keys="[Delivery.freelancer_id]")
 
 
-# ── Pydantic schemas ──────────────────────────────────────────────────────────
+# ── kept for backwards-compat if your matcher service uses these schemas ──────
+class MatchRequest(Base):
+    __tablename__ = "match_requests"
 
-class MatchRequest(BaseModel):
-    job_id: int
-    skills: List[str]
-    budget: float
-
-
-class MatchResult(BaseModel):
-    freelancer_id: int
-    name: str
-    score: float
-    sms_sent: bool
+    id         = Column(Integer, primary_key=True, index=True)
+    job_id     = Column(Integer, ForeignKey("jobs.id"))
+    skills     = Column(ARRAY(Text), default=[])
+    budget     = Column(Float)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
-class MatchResponse(BaseModel):
-    job_id: int
-    matches: List[MatchResult]
+class MatchResult(Base):
+    __tablename__ = "match_results"
+
+    id            = Column(Integer, primary_key=True, index=True)
+    job_id        = Column(Integer, ForeignKey("jobs.id"))
+    freelancer_id = Column(Integer, ForeignKey("users.id"))
+    score         = Column(Float)
+    created_at    = Column(DateTime, default=datetime.utcnow)

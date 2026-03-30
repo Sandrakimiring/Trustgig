@@ -76,6 +76,7 @@ def save_matches_to_db(job_id: int, matches: list, db: Session):
         db_match = Match(
             job_id=job_id,
             freelancer_id=match["freelancer_id"],
+            score=match["final_score"],           # backend reads 'score'
             similarity_score=match["similarity"],
             final_score=match["final_score"],
             sms_sent=match.get("sms_sent", False),
