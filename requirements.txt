@@ -23,4 +23,5 @@ click
 asyncpg
 httpx
 africastalking
+openai
 
