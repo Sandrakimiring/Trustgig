@@ -53,7 +53,7 @@ def send_match_sms(phone: str, job_title: str, budget: float, score: float, job_
         f"{job_title}\n"
         f"Budget: KES {int(budget)}\n"
         f"Match: {score_pct}%\n\n"
-        f"View job: {FRONTEND_URL}/trustgig_ui.html?job={job_id}\n\n"
+        f"View job: {FRONTEND_URL}/index.html?job={job_id}\n\n"
         f"Reply 1 to apply, 2 to ignore"
     )
     return send_sms(phone, message)
@@ -67,7 +67,7 @@ def send_application_sms_to_client(phone: str, client_name: str, freelancer_name
         f"'{job_title}'\n"
         f"Match score: {score_pct}%\n\n"
         f"To start work, fund escrow:\n"
-        f"{FRONTEND_URL}/trustgig_ui.html?job={job_id}&action=fund\n\n"
+        f"{FRONTEND_URL}/index.html?job={job_id}&action=fund\n\n"
         f"Reply YES to accept, NO to decline"
     )
     return send_sms(phone, message)
@@ -79,7 +79,7 @@ def send_escrow_funded_sms(phone: str, freelancer_name: str, job_title: str, amo
         f"Escrow of KES {int(amount)} funded for:\n"
         f"'{job_title}'\n\n"
         f"You can now start work.\n"
-        f"View job: {FRONTEND_URL}/trustgig_ui.html?job={job_id}"
+        f"View job: {FRONTEND_URL}/index.html?job={job_id}"
     )
     return send_sms(phone, message)
 
@@ -90,7 +90,7 @@ def send_work_done_sms_to_client(phone: str, client_name: str, freelancer_name: 
         f"{freelancer_name} has completed:\n"
         f"'{job_title}'\n\n"
         f"Release KES {int(amount)} payment:\n"
-        f"{FRONTEND_URL}/trustgig_ui.html?job={job_id}&action=release\n\n"
+        f"{FRONTEND_URL}/index.html?job={job_id}&action=release\n\n"
         f"Reply RELEASE to pay the freelancer"
     )
     return send_sms(phone, message)

@@ -22,7 +22,7 @@ conn.autocommit = True
 cur = conn.cursor()
 
 migrations = [
-    # jobs table
+    # ✅ Fix #3 — add assigned_freelancer_id to jobs table
     (
         "Add assigned_freelancer_id to jobs",
         """
@@ -31,6 +31,31 @@ migrations = [
         REFERENCES users(id) ON DELETE SET NULL;
         """
     ),
+
+    # Embedder upgrade: ensure matches table has all three score columns
+    (
+        "Add score to matches (backward compat alias)",
+        """
+        ALTER TABLE matches
+        ADD COLUMN IF NOT EXISTS score NUMERIC DEFAULT 0.0;
+        """
+    ),
+    (
+        "Add similarity_score to matches",
+        """
+        ALTER TABLE matches
+        ADD COLUMN IF NOT EXISTS similarity_score NUMERIC;
+        """
+    ),
+    (
+        "Add final_score to matches",
+        """
+        ALTER TABLE matches
+        ADD COLUMN IF NOT EXISTS final_score NUMERIC;
+        """
+    ),
+
+    # ✅ Add created_at to jobs if missing
     (
         "Add created_at to jobs",
         """
@@ -39,39 +64,8 @@ migrations = [
         """
     ),
 
-    # users table
-    (
-        "Add hourly_rate to users",
-        """
-        ALTER TABLE users
-        ADD COLUMN IF NOT EXISTS hourly_rate FLOAT;
-        """
-    ),
-
-    # matches table — v2 embedder columns
-    (
-        "Add final_score to matches",
-        """
-        ALTER TABLE matches
-        ADD COLUMN IF NOT EXISTS final_score NUMERIC;
-        """
-    ),
-    (
-        "Add vector_similarity to matches",
-        """
-        ALTER TABLE matches
-        ADD COLUMN IF NOT EXISTS vector_similarity FLOAT;
-        """
-    ),
-    (
-        "Add reliability to matches",
-        """
-        ALTER TABLE matches
-        ADD COLUMN IF NOT EXISTS reliability FLOAT;
-        """
-    ),
-
-    # phone normalisation
+    # ✅ Normalize existing phone numbers to +2547XXXXXXXX format
+    # Handles 07XXXXXXXX stored without country code
     (
         "Normalize 07XXXXXXXX phones to +2547XXXXXXXX",
         """

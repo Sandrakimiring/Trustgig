@@ -2,8 +2,16 @@ import numpy as np
 import faiss
 from sentence_transformers import SentenceTransformer
 
+_model = None
 
-_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+def _get_model() -> SentenceTransformer:
+    global _model
+    if _model is None:
+        print("[Embedder] Loading sentence-transformer model…")
+        _model = SentenceTransformer("all-MiniLM-L6-v2")
+        print("[Embedder] Model loaded.")
+    return _model
 
 _index_cache: dict = {}
 
@@ -15,7 +23,7 @@ def _skills_to_sentence(skills: list[str]) -> str:
 
 def embed_text(text: str) -> np.ndarray:
     """Return a normalised float32 vector for a single text string."""
-    vec = _model.encode(text, convert_to_numpy=True)
+    vec = _get_model().encode(text, convert_to_numpy=True)
     vec = vec / (np.linalg.norm(vec) + 1e-10)
     return vec.astype(np.float32)
 
@@ -26,7 +34,7 @@ def _build_index(valid: list) -> tuple:
     Returns (index, freelancer_matrix) so callers can reuse both.
     """
     sentences = [_skills_to_sentence(f.skills) for f in valid]
-    raw_vecs  = _model.encode(sentences, convert_to_numpy=True)
+    raw_vecs  = _get_model().encode(sentences, convert_to_numpy=True)
     norms     = np.linalg.norm(raw_vecs, axis=1, keepdims=True) + 1e-10
     matrix    = (raw_vecs / norms).astype(np.float32)
 

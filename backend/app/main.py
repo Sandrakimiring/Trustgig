@@ -1,9 +1,6 @@
 import sys, os, hashlib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from ai_routes import router as ai_router
-app.include_router(ai_router, prefix="/ai", tags=["AI Features"])
-
 from database import get_db, engine, Base
 from models import User, Job, Match, Delivery, MatchRequest, MatchResult
 from services.sms_service import (
@@ -33,6 +30,10 @@ app = FastAPI(
     version="3.0.0",
 )
 
+
+# TODO (teammate): uncomment these two lines when ai_routes package is complete
+# from ai_routes import router as ai_router
+# app.include_router(ai_router, prefix="/ai", tags=["AI Features"])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -77,39 +78,6 @@ def get_assigned_freelancer(job: Job, db: Session) -> Optional[User]:
     ✅ Fix #1/#2/#3 — single source of truth for 'who was hired'.
     Prefers assigned_freelancer_id, falls back to top match score.
     """
-    if job.assigned_freelancer_id:
-        return db.query(User).filter(User.id == job.assigned_freelancer_id).first()
-    top_match = (
-        db.query(Match)
-        .filter(Match.job_id == job.id)
-        .order_by(Match.final_score.desc())
-        .first()
-    )
-    if top_match:
-        return db.query(User).filter(User.id == top_match.freelancer_id).first()
-    return None
-
-
-# ── Helpers ───────────────────────────────────────────────────────────────────
-
-def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
-
-
-def normalize_phone(phone: str) -> str:
-    phone = phone.strip().replace(" ", "").replace("-", "")
-    if phone.startswith("+254"):
-        return phone
-    if phone.startswith("254"):
-        return f"+{phone}"
-    if phone.startswith("07") or phone.startswith("01"):
-        return f"+254{phone[1:]}"
-    if phone.startswith("7") or phone.startswith("1"):
-        return f"+254{phone}"
-    return phone
-
-
-def get_assigned_freelancer(job, db: Session):
     if job.assigned_freelancer_id:
         return db.query(User).filter(User.id == job.assigned_freelancer_id).first()
     top_match = (
@@ -491,7 +459,7 @@ def deliver_work(job_id: int, payload: WorkDelivery, db: Session = Depends(get_d
             f"Message: {payload.message[:80]}\n\n"
             f"View: {payload.delivery_link}\n\n"
             f"Approve & pay:\n"
-            f"{FRONTEND_URL}/trustgig_ui.html?job={job_id}&action=approve"
+            f"{FRONTEND_URL}/index.html?job={job_id}&action=approve"
         )
         ok = send_sms(client.phone, msg)
         print(f"[SMS] {'✅' if ok else '❌'} Delivery SMS → {client.name}")
@@ -574,7 +542,7 @@ def reject_delivery(job_id: int, db: Session = Depends(get_db)):
             f"The client wants revisions for:\n"
             f"'{job.title}'\n\n"
             f"Please update and resubmit:\n"
-            f"{FRONTEND_URL}/trustgig_ui.html?job={job_id}"
+            f"{FRONTEND_URL}/index.html?job={job_id}"
         )
         print(f"[SMS] ✅ Rejection SMS → {freelancer.name}")
 

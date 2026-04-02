@@ -21,6 +21,7 @@ class User(Base):
     location       = Column(String, nullable=True)
     jobs_applied   = Column(Integer, default=0)
     jobs_completed = Column(Integer, default=0)
+    last_completed = Column(DateTime, nullable=True)
 
     jobs    = relationship("Job", foreign_keys="[Job.client_id]", back_populates="client")
     matches = relationship("Match", back_populates="freelancer")

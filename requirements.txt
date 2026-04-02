@@ -8,7 +8,9 @@ sqlalchemy
 psycopg2-binary
 asyncpg
 
-# ML/Matching
+# ML/Matching — CPU-only torch keeps install size small on Render
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
 numpy
 pandas
 scikit-learn
