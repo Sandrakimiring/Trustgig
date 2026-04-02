@@ -38,14 +38,13 @@ class Match(Base):
  
     __tablename__ = "matches"
  
-    id               = Column(Integer, primary_key=True)
-    job_id           = Column(Integer)
-    freelancer_id    = Column(Integer)
-    score            = Column(Numeric, default=0.0)   # alias of final_score for backend compat
-    similarity_score = Column(Numeric)
-    final_score      = Column(Numeric)
-    sms_sent         = Column(Boolean, default=False)
-    matched_at       = Column(DateTime, default=func.now())
+    id            = Column(Integer, primary_key=True)
+    job_id        = Column(Integer)
+    freelancer_id = Column(Integer)
+    score         = Column(Numeric, default=0.0)   # alias of final_score for backend compat
+    final_score   = Column(Numeric)
+    sms_sent      = Column(Boolean, default=False)
+    matched_at    = Column(DateTime, default=func.now())
 
     # how data looks when coming in and going out 
 

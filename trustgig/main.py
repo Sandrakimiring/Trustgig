@@ -114,7 +114,6 @@ def get_matches(job_id: int, db: Session = Depends(get_db)):
             "freelancer_id": m.freelancer_id,
             "name":          freelancer.name if freelancer else "Unknown",
             "score":         float(m.final_score),
-            "similarity":    float(m.similarity_score),
             "sms_sent":      m.sms_sent,
             "matched_at":    m.matched_at.isoformat() if m.matched_at else None
         })

@@ -32,13 +32,26 @@ migrations = [
         """
     ),
 
-    # ✅ Fix #12 — drop similarity_score (was always 0.0, caused the original 500 error)
-    # Safe: check if column exists first
+    # Embedder upgrade: ensure matches table has all three score columns
     (
-        "Drop similarity_score from matches",
+        "Add score to matches (backward compat alias)",
         """
         ALTER TABLE matches
-        DROP COLUMN IF EXISTS similarity_score;
+        ADD COLUMN IF NOT EXISTS score NUMERIC DEFAULT 0.0;
+        """
+    ),
+    (
+        "Add similarity_score to matches",
+        """
+        ALTER TABLE matches
+        ADD COLUMN IF NOT EXISTS similarity_score NUMERIC;
+        """
+    ),
+    (
+        "Add final_score to matches",
+        """
+        ALTER TABLE matches
+        ADD COLUMN IF NOT EXISTS final_score NUMERIC;
         """
     ),
 
