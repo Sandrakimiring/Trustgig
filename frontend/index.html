@@ -4,118 +4,200 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TrustGig Platform</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Segoe UI',sans-serif; background:#1a0a14; color:#f5e6ef; min-height:100vh; }
-nav { background:#2d1020; padding:16px 32px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #6b2d4a; position:sticky; top:0; z-index:100; }
-.logo { font-size:22px; font-weight:700; color:#f472b6; }
-.logo span { color:#fb7185; }
-.nav-tabs { display:flex; gap:8px; }
-.nav-tab { padding:8px 18px; border-radius:8px; cursor:pointer; font-size:14px; border:none; background:transparent; color:#c084a0; transition:all 0.2s; }
-.nav-tab:hover { background:#3d1528; color:#f5e6ef; }
-.nav-tab.active { background:linear-gradient(135deg,#ec4899,#f43f5e); color:white; font-weight:600; }
-.nav-user { display:flex; align-items:center; gap:12px; }
-.nav-user-name { font-size:14px; color:#f9a8d4; font-weight:600; }
-.nav-logout { padding:6px 14px; border-radius:8px; border:1px solid #6b2d4a; background:transparent; color:#c084a0; cursor:pointer; font-size:13px; }
-.nav-logout:hover { background:#3d1528; color:#f5e6ef; }
-.page { display:none; padding:32px; max-width:1100px; margin:0 auto; }
-.page.active { display:block; }
-h1 { font-size:28px; font-weight:700; margin-bottom:8px; color:#fce7f3; }
-h2 { font-size:20px; font-weight:600; margin-bottom:16px; color:#f472b6; }
-h3 { font-size:16px; font-weight:600; margin-bottom:12px; color:#f9a8d4; }
-p.subtitle { color:#c084a0; margin-bottom:28px; }
-.auth-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:32px; }
-.auth-card { background:#2d1020; border:1px solid #6b2d4a; border-radius:16px; padding:40px; width:100%; max-width:420px; }
-.auth-logo { text-align:center; margin-bottom:28px; }
-.auth-logo h1 { font-size:32px; color:#f472b6; }
-.auth-logo p { color:#c084a0; font-size:14px; margin-top:6px; }
-.auth-tabs { display:flex; background:#1a0a14; border-radius:10px; padding:4px; margin-bottom:24px; }
-.auth-tab { flex:1; padding:10px; text-align:center; border-radius:8px; cursor:pointer; font-size:14px; color:#c084a0; border:none; background:transparent; transition:all 0.2s; }
-.auth-tab.active { background:linear-gradient(135deg,#ec4899,#f43f5e); color:white; font-weight:600; }
-.card { background:#2d1020; border:1px solid #6b2d4a; border-radius:12px; padding:24px; margin-bottom:24px; }
-.card-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-@media(max-width:700px) { .card-grid { grid-template-columns:1fr; } }
-.form-group { margin-bottom:16px; }
-label { display:block; font-size:13px; color:#c084a0; margin-bottom:6px; }
-input, select, textarea { width:100%; background:#1a0a14; border:1px solid #6b2d4a; border-radius:8px; padding:10px 14px; color:#f5e6ef; font-size:14px; outline:none; transition:border 0.2s; }
-input:focus, select:focus, textarea:focus { border-color:#f472b6; box-shadow:0 0 0 3px #f472b620; }
-textarea { resize:vertical; min-height:80px; }
-select option { background:#2d1020; }
-.btn { padding:10px 24px; border-radius:8px; border:none; cursor:pointer; font-size:14px; font-weight:600; transition:all 0.2s; }
-.btn-primary { background:linear-gradient(135deg,#ec4899,#f43f5e); color:white; width:100%; }
-.btn-primary:hover { background:linear-gradient(135deg,#db2777,#e11d48); transform:translateY(-1px); }
-.btn-secondary { background:linear-gradient(135deg,#be185d,#9d174d); color:white; }
-.btn-secondary:hover { background:linear-gradient(135deg,#9d174d,#831843); }
-.btn-warning { background:linear-gradient(135deg,#f472b6,#ec4899); color:white; }
-.btn-warning:hover { background:linear-gradient(135deg,#ec4899,#db2777); }
-.btn-danger { background:#450a0a; color:#f87171; border:1px solid #dc2626; }
-.btn-danger:hover { background:#7f1d1d; }
-.btn-sm { padding:5px 14px; font-size:12px; border-radius:6px; }
-.btn:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
-.stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
-@media(max-width:700px) { .stats { grid-template-columns:repeat(2,1fr); } }
-.stat { background:linear-gradient(135deg,#2d1020,#3d1528); border:1px solid #6b2d4a; border-radius:12px; padding:20px; text-align:center; }
-.stat-value { font-size:32px; font-weight:700; color:#f472b6; }
-.stat-label { font-size:13px; color:#c084a0; margin-top:4px; }
-.table-wrap { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; font-size:14px; }
-th { background:#1a0a14; padding:12px 16px; text-align:left; color:#c084a0; font-weight:600; }
-td { padding:12px 16px; border-top:1px solid #3d1528; }
-tr:hover td { background:#3d152844; }
-.badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; }
-.badge-green { background:#4a1942; color:#f9a8d4; }
-.badge-yellow { background:#4a2010; color:#fdba74; }
-.badge-blue { background:#1e1a4a; color:#c4b5fd; }
-.badge-gray { background:#3d1528; color:#c084a0; }
-.badge-orange { background:#431407; color:#fb923c; }
-.match-card { background:#1a0a14; border:1px solid #6b2d4a; border-radius:10px; padding:16px; margin-bottom:12px; display:flex; align-items:center; gap:16px; }
-.match-rank { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#ec4899,#f43f5e); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; flex-shrink:0; }
-.match-rank.gold { background:linear-gradient(135deg,#f59e0b,#d97706); }
-.match-rank.silver { background:linear-gradient(135deg,#94a3b8,#64748b); }
-.match-rank.bronze { background:linear-gradient(135deg,#92400e,#78350f); color:#fbbf24; }
-.match-info { flex:1; }
-.match-name { font-weight:600; font-size:15px; color:#fce7f3; }
-.match-score-bar { height:6px; background:#3d1528; border-radius:3px; margin-top:8px; }
-.match-score-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#ec4899,#f43f5e); }
-.match-score-text { font-size:18px; font-weight:700; color:#f472b6; }
-.freelancer-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
-.freelancer-card { background:#1a0a14; border:1px solid #6b2d4a; border-radius:10px; padding:20px; transition:border-color 0.2s; }
-.freelancer-card:hover { border-color:#f472b6; }
-.freelancer-name { font-weight:600; font-size:16px; margin-bottom:4px; color:#fce7f3; }
-.freelancer-location { color:#c084a0; font-size:13px; margin-bottom:12px; }
-.skill-tags { display:flex; flex-wrap:wrap; gap:6px; }
-.skill-tag { background:#4a1942; color:#f9a8d4; padding:3px 10px; border-radius:20px; font-size:12px; }
-.alert { padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:14px; display:none; }
-.alert-success { background:#4a1942; color:#f9a8d4; border:1px solid #be185d; }
-.alert-error { background:#450a0a; color:#f87171; border:1px solid #dc2626; }
-.alert-info { background:#2d1a4a; color:#c4b5fd; border:1px solid #7c3aed; }
-.spinner { display:inline-block; width:16px; height:16px; border:2px solid #6b2d4a; border-top-color:#f472b6; border-radius:50%; animation:spin 0.8s linear infinite; margin-right:8px; vertical-align:middle; }
-@keyframes spin { to { transform:rotate(360deg); } }
-.empty { text-align:center; padding:40px; color:#c084a0; }
-.section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-.hint { font-size:12px; color:#c084a0; margin-top:8px; }
-.welcome-banner { background:linear-gradient(135deg,#3d1528,#2d1020); border:1px solid #6b2d4a; border-radius:12px; padding:20px 24px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; }
-.welcome-text h2 { margin-bottom:4px; }
-.welcome-text p { color:#ef1078; font-size:14px; }
-.role-badge { padding:6px 16px; border-radius:20px; font-size:13px; font-weight:600; }
-.role-client { background:#e8d6e5; color:#8b1a4a; }
-.role-freelancer { background:#1e1a4a; color:#c4b5fd; }
-.delivery-box { margin-top:16px; padding:16px; background:#1a0a14; border-radius:10px; border:1px solid #6b2d4a; }
-.delivery-box h4 { color:#f9a8d4; margin-bottom:8px; font-size:14px; }
-.delivery-link { color:#ecc1d7; font-size:13px; word-break:break-all; text-decoration:none; }
-.delivery-link:hover { text-decoration:underline; }
-.delivery-actions { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;--surface3:#22222f;
+  --border:#2a2a3a;--border-hover:#3a3a4f;
+  --text:#e8e8f0;--text2:#9898b0;--text3:#686880;
+  --accent:#6c5ce7;--accent2:#a78bfa;--accent-glow:#6c5ce740;
+  --green:#10b981;--yellow:#f59e0b;--red:#ef4444;--blue:#3b82f6;--orange:#f97316;
+  --gradient:linear-gradient(135deg,#6c5ce7,#a78bfa);
+  --gradient2:linear-gradient(135deg,#6c5ce7 0%,#ec4899 100%);
+  --radius:12px;--radius-sm:8px;--radius-lg:16px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.5);
+}
+/* Light theme */
+[data-theme="light"]{
+  --bg:#f0f0f8;--surface:#ffffff;--surface2:#e8e8f4;--surface3:#dcdcec;
+  --border:#d4d4e8;--border-hover:#b4b4cc;
+  --text:#1a1a2e;--text2:#54546e;--text3:#8888a0;
+  --accent-glow:rgba(108,92,231,0.12);
+  --shadow:0 4px 24px rgba(108,92,231,0.07);
+  --shadow-lg:0 8px 40px rgba(108,92,231,0.12);
+}
+[data-theme="light"] .auth-wrap{background:radial-gradient(ellipse at 50% 0%,#e4e0ff 0%,var(--bg) 70%);}
+[data-theme="light"] .welcome-banner{background:linear-gradient(135deg,#f4f0ff,#fff);}
+[data-theme="light"] .freelancer-card:hover{box-shadow:0 4px 20px rgba(108,92,231,0.12);}
+[data-theme="light"] select option{background:#fff;color:#1a1a2e;}
+[data-theme="light"] nav{background:rgba(255,255,255,0.85);}
+
+/* Theme toggle button */
+.theme-toggle{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all 0.2s;flex-shrink:0;}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent);transform:rotate(20deg);}
+
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;transition:background 0.3s,color 0.3s;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--border-hover);}
+
+/* Nav */
+nav{background:rgba(18,18,26,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{font-size:20px;font-weight:800;background:var(--gradient2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px;}
+.nav-tabs{display:flex;gap:4px;background:var(--surface);border-radius:var(--radius-sm);padding:4px;}
+.nav-tab{padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--text2);transition:all 0.2s ease;}
+.nav-tab:hover{color:var(--text);background:var(--surface2);}
+.nav-tab.active{background:var(--gradient);color:white;font-weight:600;box-shadow:0 2px 12px var(--accent-glow);}
+.nav-user{display:flex;align-items:center;gap:12px;}
+.nav-user-name{font-size:13px;color:var(--accent2);font-weight:600;}
+.nav-logout{padding:6px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-weight:500;transition:all 0.2s;}
+.nav-logout:hover{background:var(--surface2);color:var(--text);border-color:var(--border-hover);}
+
+/* Pages */
+.page{display:none;padding:32px;max-width:1100px;margin:0 auto;animation:fadeIn 0.3s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+h1{font-size:24px;font-weight:700;margin-bottom:6px;color:var(--text);letter-spacing:-0.3px;}
+h2{font-size:17px;font-weight:600;margin-bottom:14px;color:var(--text);}
+h3{font-size:15px;font-weight:600;margin-bottom:10px;color:var(--text);}
+p.subtitle{color:var(--text2);margin-bottom:28px;font-size:14px;}
+
+/* Auth */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;background:radial-gradient(ellipse at 50% 0%,#1a1a3a 0%,var(--bg) 70%);}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);}
+.auth-logo{text-align:center;margin-bottom:32px;}
+.auth-logo h1{font-size:28px;font-weight:800;background:var(--gradient2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.auth-logo p{color:var(--text2);font-size:13px;margin-top:8px;}
+.auth-tabs{display:flex;background:var(--bg);border-radius:var(--radius-sm);padding:4px;margin-bottom:24px;}
+.auth-tab{flex:1;padding:10px;text-align:center;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);border:none;background:transparent;transition:all 0.2s;}
+.auth-tab.active{background:var(--gradient);color:white;font-weight:600;box-shadow:0 2px 12px var(--accent-glow);}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;transition:border-color 0.2s;}
+.card:hover{border-color:var(--border-hover);}
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:700px){.card-grid{grid-template-columns:1fr;}}
+
+/* Forms */
+.form-group{margin-bottom:16px;}
+label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:all 0.2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+input::placeholder,textarea::placeholder{color:var(--text2);opacity:0.5;}
+textarea{resize:vertical;min-height:80px;}
+select option{background:var(--surface);}
+
+/* Buttons */
+.btn{padding:10px 20px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--gradient);color:white;width:100%;justify-content:center;box-shadow:0 2px 12px var(--accent-glow);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px var(--accent-glow);}
+.btn-secondary{background:var(--accent);color:white;}
+.btn-secondary:hover{background:#7c6cf7;transform:translateY(-1px);}
+.btn-warning{background:linear-gradient(135deg,var(--yellow),var(--orange));color:white;}
+.btn-warning:hover{transform:translateY(-1px);}
+.btn-danger{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.btn-danger:hover{background:rgba(239,68,68,0.2);}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:6px;}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none !important;}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;transition:all 0.2s;}
+.stat:hover{border-color:var(--accent);box-shadow:0 0 20px var(--accent-glow);}
+.stat-value{font-size:32px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-label{font-size:12px;color:var(--text2);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* Tables */
+.table-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--surface2);padding:12px 16px;text-align:left;color:var(--text2);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;}
+td{padding:12px 16px;border-top:1px solid var(--border);}
+tr:hover td{background:var(--surface2);}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase;}
+.badge-green{background:rgba(16,185,129,0.15);color:var(--green);}
+.badge-yellow{background:rgba(245,158,11,0.15);color:var(--yellow);}
+.badge-blue{background:rgba(59,130,246,0.15);color:var(--blue);}
+.badge-gray{background:rgba(148,148,176,0.1);color:var(--text2);}
+.badge-orange{background:rgba(249,115,22,0.15);color:var(--orange);}
+
+/* Match cards */
+.match-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;transition:all 0.2s;}
+.match-card:hover{border-color:var(--border-hover);background:var(--surface2);}
+.match-rank{width:34px;height:34px;border-radius:50%;background:var(--gradient);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+.match-rank.gold{background:linear-gradient(135deg,#f59e0b,#d97706);}
+.match-rank.silver{background:linear-gradient(135deg,#94a3b8,#64748b);}
+.match-rank.bronze{background:linear-gradient(135deg,#b45309,#92400e);}
+.match-info{flex:1;min-width:0;}
+.match-name{font-weight:600;font-size:14px;color:var(--text);}
+.match-score-bar{height:4px;background:var(--surface3);border-radius:2px;margin-top:8px;overflow:hidden;}
+.match-score-fill{height:100%;border-radius:2px;background:var(--gradient);}
+.match-score-text{font-size:16px;font-weight:700;color:var(--accent2);flex-shrink:0;}
+
+/* Freelancer grid */
+.freelancer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.freelancer-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:all 0.2s;}
+.freelancer-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+.freelancer-name{font-weight:600;font-size:15px;margin-bottom:4px;color:var(--text);}
+.freelancer-location{color:var(--text2);font-size:12px;margin-bottom:12px;}
+.skill-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.skill-tag{background:rgba(108,92,231,0.15);color:var(--accent2);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;}
+
+/* Alerts */
+.alert{padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:13px;display:none;font-weight:500;}
+.alert-success{background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.2);}
+.alert-error{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);}
+.alert-info{background:rgba(59,130,246,0.1);color:var(--blue);border:1px solid rgba(59,130,246,0.2);}
+
+/* Spinner */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Misc */
+.empty{text-align:center;padding:40px;color:var(--text2);font-size:14px;}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.hint{font-size:12px;color:var(--text2);margin-top:10px;line-height:1.5;}
+.welcome-banner{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 28px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;}
+.welcome-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gradient2);}
+.welcome-text h2{margin-bottom:4px;font-size:20px;}
+.welcome-text p{color:var(--text2);font-size:14px;}
+.role-badge{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.role-client{background:rgba(108,92,231,0.15);color:var(--accent2);}
+.role-freelancer{background:rgba(16,185,129,0.15);color:var(--green);}
+.delivery-box{margin-top:16px;padding:16px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);}
+.delivery-box h4{color:var(--text);margin-bottom:8px;font-size:13px;font-weight:600;}
+.delivery-link{color:var(--accent2);font-size:13px;word-break:break-all;text-decoration:none;}
+.delivery-link:hover{text-decoration:underline;}
+.delivery-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+
+/* Responsive nav */
+@media(max-width:768px){
+  nav{padding:0 16px;gap:8px;}
+  .nav-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .nav-tab{white-space:nowrap;font-size:12px;padding:6px 12px;}
+  .page{padding:20px 16px;}
+  .welcome-banner{flex-direction:column;align-items:flex-start;gap:12px;}
+}
 </style>
 </head>
 <body>
 
 <!-- AUTH PAGE -->
 <div id="auth-page">
+  <button class="theme-toggle" id="theme-btn-auth" onclick="toggleTheme()" title="Toggle theme" style="position:fixed;top:16px;right:16px;z-index:200;">🌙</button>
   <div class="auth-wrap">
     <div class="auth-card">
       <div class="auth-logo">
-        <h1>Trust<span style="color:#e8b8bf">Gig</span> 💕</h1>
+        <h1>TrustGig ⚡</h1>
         <p>AI-powered freelance marketplace</p>
       </div>
       <div class="auth-tabs">
@@ -126,8 +208,8 @@ tr:hover td { background:#3d152844; }
         <div id="alert-login" class="alert"></div>
         <div class="form-group"><label>Phone Number</label><input type="text" id="login-phone" placeholder="+254712345678" autocomplete="tel"></div>
         <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password"></div>
-        <button class="btn btn-primary" onclick="login()">Login 💕</button>
-        <p style="text-align:center;margin-top:16px;font-size:13px;color:#c084a0">Don't have an account? <a href="#" onclick="switchAuth('signup')" style="color:#f472b6">Sign up</a></p>
+        <button class="btn btn-primary" onclick="login()">Login</button>
+        <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text2)">Don't have an account? <a href="#" onclick="switchAuth('signup')" style="color:var(--accent2)">Sign up</a></p>
       </div>
       <div id="auth-signup" style="display:none">
         <div id="alert-signup" class="alert"></div>
@@ -142,7 +224,7 @@ tr:hover td { background:#3d152844; }
           </select>
         </div>
         <div id="signup-freelancer-fields" style="display:none">
-          <div class="form-group"><label>Your Skills (comma-separated)</label><input type="text" id="signup-skills" placeholder="figma,ui ux,design"></div>
+          <div class="form-group"><label>Your Skills (comma-separated)</label><input type="text" id="signup-skills" placeholder="figma, ui ux, design"></div>
           <div class="form-group"><label>Experience Level</label>
             <select id="signup-experience">
               <option value="beginner">Beginner</option>
@@ -152,8 +234,8 @@ tr:hover td { background:#3d152844; }
           </div>
         </div>
         <div class="form-group"><label>Location</label><input type="text" id="signup-location" placeholder="Nairobi" autocomplete="address-level2"></div>
-        <button class="btn btn-primary" onclick="signup()">Create Account ✨</button>
-        <p style="text-align:center;margin-top:16px;font-size:13px;color:#c084a0">Already have an account? <a href="#" onclick="switchAuth('login')" style="color:#f472b6">Login</a></p>
+        <button class="btn btn-primary" onclick="signup()">Create Account</button>
+        <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text2)">Already have an account? <a href="#" onclick="switchAuth('login')" style="color:var(--accent2)">Login</a></p>
       </div>
     </div>
   </div>
@@ -162,9 +244,10 @@ tr:hover td { background:#3d152844; }
 <!-- MAIN APP -->
 <div id="app-page" style="display:none">
   <nav>
-    <div class="logo">Trust<span>Gig</span> 💕</div>
+    <div class="logo">TrustGig</div>
     <div class="nav-tabs" id="nav-tabs"></div>
     <div class="nav-user">
+      <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn-app" title="Toggle theme">🌙</button>
       <span class="nav-user-name" id="nav-user-name"></span>
       <button class="nav-logout" onclick="logout()">Logout</button>
     </div>
@@ -173,7 +256,7 @@ tr:hover td { background:#3d152844; }
   <!-- OVERVIEW -->
   <div id="page-overview" class="page">
     <div class="welcome-banner">
-      <div class="welcome-text"><h2 id="welcome-msg">Welcome back! 💕</h2><p id="welcome-sub">Here's what's happening</p></div>
+      <div class="welcome-text"><h2 id="welcome-msg">Welcome back!</h2><p id="welcome-sub">Here's what's happening</p></div>
       <span class="role-badge role-client" id="role-badge">Client</span>
     </div>
     <div class="stats">
@@ -183,7 +266,7 @@ tr:hover td { background:#3d152844; }
       <div class="stat"><div class="stat-value" id="stat-open">—</div><div class="stat-label">Open Jobs</div></div>
     </div>
     <div class="card">
-      <div class="section-header"><h2>Recent Jobs</h2><button class="btn btn-secondary btn-sm" onclick="loadOverview()">🔄 Refresh</button></div>
+      <div class="section-header"><h2>Recent Jobs</h2><button class="btn btn-secondary btn-sm" onclick="loadOverview()">↻ Refresh</button></div>
       <div class="table-wrap">
         <table><thead><tr><th>ID</th><th>Title</th><th>Budget</th><th>Status</th><th>Action</th></tr></thead>
         <tbody id="overview-jobs-table"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody></table>
@@ -193,33 +276,33 @@ tr:hover td { background:#3d152844; }
 
   <!-- CLIENT: MY JOBS -->
   <div id="page-myjobs" class="page">
-    <h1>💼 My Jobs</h1>
+    <h1>My Jobs</h1>
     <p class="subtitle">Your posted jobs, applicants, and work deliveries</p>
     <div id="my-jobs-list"><div class="empty"><span class="spinner"></span>Loading...</div></div>
   </div>
 
   <!-- CLIENT: POST JOB -->
   <div id="page-postjob" class="page">
-    <h1>➕ Post a New Job</h1>
+    <h1>Post a New Job</h1>
     <p class="subtitle">AI will automatically match and notify the best freelancers</p>
     <div class="card" style="max-width:600px">
       <div id="alert-job" class="alert"></div>
       <div class="form-group"><label>Job Title</label><input type="text" id="job-title" placeholder="e.g. Mobile App UI Design"></div>
       <div class="form-group"><label>Description</label><textarea id="job-description" placeholder="Describe the job in detail..."></textarea></div>
-      <div class="form-group"><label>Skills Required (comma-separated)</label><input type="text" id="job-skills" placeholder="figma,ui ux,design"></div>
+      <div class="form-group"><label>Skills Required (comma-separated)</label><input type="text" id="job-skills" placeholder="figma, ui ux, design"></div>
       <div class="form-group"><label>Budget (KES)</label><input type="number" id="job-budget" placeholder="e.g. 8000"></div>
-      <button class="btn btn-primary" id="post-job-btn" onclick="createJob()">🚀 Post Job + Trigger AI Matching</button>
+      <button class="btn btn-primary" id="post-job-btn" onclick="createJob()">Post Job + AI Matching</button>
       <p class="hint">⚡ Matched freelancers get SMS with job link automatically</p>
     </div>
   </div>
 
   <!-- CLIENT: ESCROW -->
   <div id="page-escrow" class="page">
-    <h1>💸 Escrow & Payments</h1>
+    <h1>Escrow & Payments</h1>
     <p class="subtitle">Fund jobs and release payments to freelancers via M-Pesa</p>
     <div class="card-grid">
       <div class="card">
-        <h2>💰 Fund Escrow</h2>
+        <h2>Fund Escrow</h2>
         <div id="alert-fund" class="alert"></div>
         <div class="form-group"><label>Select Job</label><select id="fund-job-id" onchange="loadApplicantsForFund()"></select></div>
         <div class="form-group">
@@ -227,19 +310,19 @@ tr:hover td { background:#3d152844; }
           <select id="fund-freelancer-id"><option value="">— select a job first —</option></select>
         </div>
         <div class="form-group"><label>Amount (KES)</label><input type="number" id="fund-amount" placeholder="e.g. 8000"></div>
-        <button class="btn btn-secondary" onclick="fundEscrow()">💰 Fund Escrow</button>
-        <p class="hint">📱 Hired freelancer gets SMS to start work. Client gets confirmation.</p>
+        <button class="btn btn-secondary" onclick="fundEscrow()">Fund Escrow</button>
+        <p class="hint">Hired freelancer gets SMS to start work. Client gets confirmation.</p>
       </div>
       <div class="card">
-        <h2>🚀 Release Payment</h2>
+        <h2>Release Payment</h2>
         <div id="alert-release" class="alert"></div>
         <div class="form-group"><label>Select Job</label><select id="release-job-id"></select></div>
-        <button class="btn btn-warning" onclick="releasePayment()">🚀 Release to M-Pesa</button>
-        <p class="hint">💸 Freelancer receives M-Pesa + SMS. Use only if approve didn't work.</p>
+        <button class="btn btn-warning" onclick="releasePayment()">Release to M-Pesa</button>
+        <p class="hint">Freelancer receives M-Pesa + SMS. Use only if approve didn't work.</p>
       </div>
     </div>
     <div class="card">
-      <div class="section-header"><h2>All Jobs Status</h2><button class="btn btn-secondary btn-sm" onclick="loadEscrow()">🔄 Refresh</button></div>
+      <div class="section-header"><h2>All Jobs Status</h2><button class="btn btn-secondary btn-sm" onclick="loadEscrow()">↻ Refresh</button></div>
       <div class="table-wrap">
         <table><thead><tr><th>ID</th><th>Title</th><th>Budget (KES)</th><th>Status</th><th>Action</th></tr></thead>
         <tbody id="escrow-jobs-table"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody></table>
@@ -249,31 +332,31 @@ tr:hover td { background:#3d152844; }
 
   <!-- FREELANCER: MY MATCHES -->
   <div id="page-mymatches" class="page">
-    <h1>🤖 My Job Matches</h1>
+    <h1>My Job Matches</h1>
     <p class="subtitle">Jobs the AI matched you to</p>
     <div id="my-matches-list"><div class="empty"><span class="spinner"></span>Loading...</div></div>
   </div>
 
   <!-- FREELANCER: BROWSE JOBS -->
   <div id="page-browsejobs" class="page">
-    <h1>💼 Browse Open Jobs</h1>
+    <h1>Browse Open Jobs</h1>
     <p class="subtitle">All open jobs on the platform — apply directly here</p>
     <div id="browse-jobs-list"><div class="empty"><span class="spinner"></span>Loading...</div></div>
   </div>
 
   <!-- FREELANCER: MY APPLICATIONS -->
   <div id="page-myapplications" class="page">
-    <h1>📋 My Applications</h1>
+    <h1>My Applications</h1>
     <p class="subtitle">Jobs you've applied to — submit your work here once hired</p>
     <div id="my-applications-list"><div class="empty"><span class="spinner"></span>Loading...</div></div>
   </div>
 
   <!-- SHARED: FREELANCERS -->
   <div id="page-freelancers" class="page">
-    <h1>👥 Freelancer Directory</h1>
+    <h1>Freelancer Directory</h1>
     <p class="subtitle">All registered freelancers on the platform</p>
     <div class="card">
-      <div class="form-group"><input type="text" id="freelancer-search" placeholder="🔍 Search by name or skill..." oninput="filterFreelancers()"></div>
+      <div class="form-group"><input type="text" id="freelancer-search" placeholder="Search by name or skill..." oninput="filterFreelancers()"></div>
       <div id="freelancer-grid" class="freelancer-grid"><div class="empty">Loading...</div></div>
     </div>
   </div>
@@ -283,7 +366,30 @@ tr:hover td { background:#3d152844; }
 const API = "https://trustgig-backend.onrender.com";
 let currentUser = null;
 
-// ── Core API helper ───────────────────────────────────────────────────────────
+// ── Skills parser — handles all storage formats ───────────────────────────────
+// Covers: JS array, JSON string "["a","b"]", PostgreSQL literal {"a","b"}, CSV "a,b"
+function parseSkills(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) {
+    // Detect character-per-element corruption: first element is '{' means the whole
+    // PostgreSQL array literal was split into individual chars when saved to DB.
+    // Re-join and fall through to string parsing.
+    if (raw[0] === '{' || (raw.length > 4 && raw.every(x => typeof x === 'string' && x.length <= 2))) {
+      raw = raw.join('');
+    } else {
+      return raw.map(s => String(s).trim()).filter(Boolean);
+    }
+  }
+  if (typeof raw !== 'string') return [];
+  const s = raw.trim();
+  if (s.startsWith('{') && s.endsWith('}'))          // PostgreSQL: {"Machine learning","python"}
+    return s.slice(1, -1).split(',').map(x => x.replace(/^"|"$/g, '').trim()).filter(Boolean);
+  if (s.startsWith('[')) {                            // JSON string: ["python","ml"]
+    try { const p = JSON.parse(s); return Array.isArray(p) ? p.map(String).filter(Boolean) : []; } catch(e) {}
+  }
+  return s.split(',').map(x => x.trim()).filter(Boolean); // plain CSV
+}
+
 async function apiCall(method, path, body = null) {
   const opts = { method, headers: { 'Content-Type': 'application/json' } };
   if (body) opts.body = JSON.stringify(body);
@@ -293,7 +399,6 @@ async function apiCall(method, path, body = null) {
   return data;
 }
 
-// ── UI Helpers ────────────────────────────────────────────────────────────────
 function showAlert(id, msg, type = 'success') {
   const el = document.getElementById(id);
   if (!el) return;
@@ -315,7 +420,6 @@ function statusBadge(s) {
   return `<span class="badge ${m[s] || 'badge-gray'}">${s.replace('_', ' ')}</span>`;
 }
 
-// ── Auth ──────────────────────────────────────────────────────────────────────
 function switchAuth(tab) {
   document.getElementById('auth-login').style.display = tab === 'login' ? 'block' : 'none';
   document.getElementById('auth-signup').style.display = tab === 'signup' ? 'block' : 'none';
@@ -337,7 +441,7 @@ async function login() {
     currentUser = data;
     localStorage.setItem('trustgig_user', JSON.stringify(data));
     initApp();
-  } catch (e) { showAlert('alert-login', `❌ ${e.message}`, 'error'); }
+  } catch (e) { showAlert('alert-login', `${e.message}`, 'error'); }
 }
 
 async function signup() {
@@ -355,9 +459,9 @@ async function signup() {
   if (!body.name || !body.phone || !body.password) { showAlert('alert-signup', 'Please fill in all required fields', 'error'); return; }
   try {
     await apiCall('POST', '/signup', body);
-    showAlert('alert-signup', '✅ Account created! Please login 💕', 'success');
+    showAlert('alert-signup', 'Account created! Please login', 'success');
     setTimeout(() => switchAuth('login'), 2000);
-  } catch (e) { showAlert('alert-signup', `❌ ${e.message}`, 'error'); }
+  } catch (e) { showAlert('alert-signup', `${e.message}`, 'error'); }
 }
 
 function logout() {
@@ -367,34 +471,33 @@ function logout() {
   document.getElementById('app-page').style.display = 'none';
 }
 
-// ── App Init ──────────────────────────────────────────────────────────────────
 function initApp() {
   document.getElementById('auth-page').style.display = 'none';
   document.getElementById('app-page').style.display = 'block';
-  document.getElementById('nav-user-name').textContent = `${currentUser.name} 💕`;
-  document.getElementById('welcome-msg').textContent = `Welcome back, ${currentUser.name}! 💕`;
+  document.getElementById('nav-user-name').textContent = currentUser.name;
+  document.getElementById('welcome-msg').textContent = `Welcome back, ${currentUser.name}!`;
 
   if (currentUser.role === 'client') {
     document.getElementById('welcome-sub').textContent = 'Post jobs and manage your freelancers';
-    document.getElementById('role-badge').textContent = '👔 Client';
+    document.getElementById('role-badge').textContent = 'Client';
     document.getElementById('role-badge').className = 'role-badge role-client';
     document.getElementById('nav-tabs').innerHTML = `
-      <button class="nav-tab active" onclick="showPage('overview',this)">📊 Overview</button>
-      <button class="nav-tab" onclick="showPage('myjobs',this)">💼 My Jobs</button>
-      <button class="nav-tab" onclick="showPage('postjob',this)">➕ Post Job</button>
-      <button class="nav-tab" onclick="showPage('escrow',this)">💸 Escrow</button>
-      <button class="nav-tab" onclick="showPage('freelancers',this)">👥 Freelancers</button>`;
+      <button class="nav-tab active" onclick="showPage('overview',this)">Overview</button>
+      <button class="nav-tab" onclick="showPage('myjobs',this)">My Jobs</button>
+      <button class="nav-tab" onclick="showPage('postjob',this)">Post Job</button>
+      <button class="nav-tab" onclick="showPage('escrow',this)">Escrow</button>
+      <button class="nav-tab" onclick="showPage('freelancers',this)">Freelancers</button>`;
     loadOverview();
   } else {
     document.getElementById('welcome-sub').textContent = 'Find jobs that match your skills';
-    document.getElementById('role-badge').textContent = '💻 Freelancer';
+    document.getElementById('role-badge').textContent = 'Freelancer';
     document.getElementById('role-badge').className = 'role-badge role-freelancer';
     document.getElementById('nav-tabs').innerHTML = `
-      <button class="nav-tab active" onclick="showPage('overview',this)">📊 Overview</button>
-      <button class="nav-tab" onclick="showPage('mymatches',this)">🤖 My Matches</button>
-      <button class="nav-tab" onclick="showPage('myapplications',this)">📋 My Applications</button>
-      <button class="nav-tab" onclick="showPage('browsejobs',this)">💼 Browse Jobs</button>
-      <button class="nav-tab" onclick="showPage('freelancers',this)">👥 Freelancers</button>`;
+      <button class="nav-tab active" onclick="showPage('overview',this)">Overview</button>
+      <button class="nav-tab" onclick="showPage('mymatches',this)">My Matches</button>
+      <button class="nav-tab" onclick="showPage('myapplications',this)">Applications</button>
+      <button class="nav-tab" onclick="showPage('browsejobs',this)">Browse Jobs</button>
+      <button class="nav-tab" onclick="showPage('freelancers',this)">Freelancers</button>`;
     loadOverview();
     loadMyMatches();
   }
@@ -414,7 +517,6 @@ function showPage(name, btn) {
   if (name === 'browsejobs') loadBrowseJobs();
 }
 
-// ── Overview ──────────────────────────────────────────────────────────────────
 async function loadOverview() {
   try {
     const [jobs, users] = await Promise.all([apiCall('GET', '/jobs'), apiCall('GET', '/users')]);
@@ -423,19 +525,19 @@ async function loadOverview() {
     document.getElementById('stat-clients').textContent = users.filter(u => u.role === 'client').length;
     document.getElementById('stat-open').textContent = jobs.filter(j => j.status === 'open').length;
     const tbody = document.getElementById('overview-jobs-table');
-    if (!jobs.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty">No jobs yet 🌸</td></tr>'; return; }
+    if (!jobs.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty">No jobs yet</td></tr>'; return; }
     tbody.innerHTML = jobs.slice(0, 10).map(j => `<tr>
       <td>#${j.id}</td><td><strong>${j.title}</strong></td>
       <td>KES ${Number(j.budget).toLocaleString()}</td>
       <td>${statusBadge(j.status)}</td>
       <td>${currentUser.role === 'client'
         ? j.status === 'open'
-          ? `<button class="btn btn-secondary btn-sm" onclick="goFundJob(${j.id},${j.budget})">Fund 💰</button>`
+          ? `<button class="btn btn-secondary btn-sm" onclick="goFundJob(${j.id},${j.budget})">Fund</button>`
           : j.status === 'in_progress'
-            ? `<button class="btn btn-warning btn-sm" onclick="goReleaseJob(${j.id})">Release 🚀</button>`
+            ? `<button class="btn btn-warning btn-sm" onclick="goReleaseJob(${j.id})">Release</button>`
             : '✅ Done'
         : j.status === 'open'
-          ? `<button class="btn btn-secondary btn-sm" onclick="applyToJob(${j.id}, this)">Apply 💌</button>`
+          ? `<button class="btn btn-secondary btn-sm" onclick="applyToJob(${j.id}, this)">Apply</button>`
           : statusBadge(j.status)
       }</td></tr>`).join('');
   } catch (e) {
@@ -443,7 +545,6 @@ async function loadOverview() {
   }
 }
 
-// ✅ Fix: navigate to escrow by name not index
 function goFundJob(job_id, budget) {
   showPage('escrow', [...document.querySelectorAll('.nav-tab')].find(t => t.textContent.includes('Escrow')));
   setTimeout(async () => {
@@ -459,21 +560,19 @@ function goReleaseJob(job_id) {
   setTimeout(() => { document.getElementById('release-job-id').value = job_id; }, 300);
 }
 
-// ── Client: My Jobs ───────────────────────────────────────────────────────────
 async function loadMyJobs() {
   const el = document.getElementById('my-jobs-list');
   try {
     const jobs = await apiCall('GET', '/jobs');
     const mine = jobs.filter(j => j.client_id === currentUser.id);
-    if (!mine.length) { el.innerHTML = '<div class="empty">No jobs posted yet. Click ➕ Post Job! 🌸</div>'; return; }
+    if (!mine.length) { el.innerHTML = '<div class="empty">No jobs posted yet. Post your first job!</div>'; return; }
 
     el.innerHTML = mine.map(j => `
       <div class="card" style="margin-bottom:16px" id="job-card-${j.id}">
         <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
           <div>
             <h3>#${j.id} — ${j.title}</h3>
-            <p style="font-size:13px;color:#c084a0">💰 KES ${Number(j.budget).toLocaleString()} &nbsp;|&nbsp;
-            🛠 ${Array.isArray(j.skills_required) ? j.skills_required.join(', ') : j.skills_required || '—'}</p>
+            <p style="font-size:13px;color:var(--text2)">KES ${Number(j.budget).toLocaleString()} · ${parseSkills(j.skills_required).join(', ') || '—'}</p>
           </div>
           ${statusBadge(j.status)}
         </div>
@@ -490,21 +589,21 @@ async function loadJobMatches(jobId) {
   try {
     const data = await apiCall('GET', `/jobs/${jobId}/applications`);
     const matches = data.applications || [];
-    if (!matches.length) { el.innerHTML = '<p style="font-size:13px;color:#c084a0">No applicants yet 🌸</p>'; return; }
+    if (!matches.length) { el.innerHTML = '<p style="font-size:13px;color:var(--text2)">No applicants yet</p>'; return; }
     const rc = ['gold', 'silver', 'bronze'];
-    el.innerHTML = `<p style="font-size:13px;color:#c084a0;margin-bottom:10px">👥 ${matches.length} Applicant(s)</p>` +
+    el.innerHTML = `<p style="font-size:13px;color:var(--text2);margin-bottom:10px">${matches.length} Applicant(s)</p>` +
       matches.map((m, i) => `
         <div class="match-card">
           <div class="match-rank ${rc[i] || ''}">${i + 1}</div>
           <div class="match-info">
             <div class="match-name">${m.name}</div>
-            <div style="font-size:12px;color:#c084a0">${Array.isArray(m.skills) ? m.skills.join(', ') : ''}</div>
+            <div style="font-size:12px;color:var(--text2)">${parseSkills(m.skills).join(', ')}</div>
             <div class="match-score-bar"><div class="match-score-fill" style="width:${m.score * 100}%"></div></div>
           </div>
           <div class="match-score-text">${(m.score * 100).toFixed(0)}%</div>
         </div>`).join('');
   } catch (e) {
-    el.innerHTML = '<p style="font-size:13px;color:#c084a0;margin-top:10px">No applicants yet 🌸</p>';
+    el.innerHTML = '<p style="font-size:13px;color:var(--text2);margin-top:10px">No applicants yet</p>';
   }
 }
 
@@ -514,23 +613,23 @@ async function loadDeliveryForClient(jobId) {
     const delivery = await apiCall('GET', `/jobs/${jobId}/delivery`);
     el.innerHTML = `
       <div class="delivery-box">
-        <h4>📤 Work Delivered by ${delivery.freelancer_name}</h4>
-        <p style="font-size:13px;color:#c084a0;margin-bottom:8px">${delivery.message}</p>
-        <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">🔗 ${delivery.delivery_link}</a>
+        <h4>Work Delivered by ${delivery.freelancer_name}</h4>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:8px">${delivery.message}</p>
+        <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">${delivery.delivery_link}</a>
         <div style="margin-top:8px">${statusBadge(delivery.status)}</div>
         ${delivery.status === 'pending' ? `
         <div class="delivery-actions">
-          <button class="btn btn-secondary btn-sm" onclick="approveDelivery(${jobId})">✅ Approve & Release Payment</button>
-          <button class="btn btn-danger btn-sm" onclick="rejectDelivery(${jobId})">❌ Request Revision</button>
+          <button class="btn btn-secondary btn-sm" onclick="approveDelivery(${jobId})">✓ Approve & Release Payment</button>
+          <button class="btn btn-danger btn-sm" onclick="rejectDelivery(${jobId})">✕ Request Revision</button>
         </div>` : ''}
       </div>`;
   } catch (e) {
     const job = await apiCall('GET', `/jobs/${jobId}`).catch(() => null);
     if (job && job.status === 'in_progress') {
       el.innerHTML = `
-        <div class="delivery-box" style="border-color:#4a2010">
-          <h4 style="color:#fdba74">⏳ Awaiting Work Delivery</h4>
-          <p style="font-size:13px;color:#c084a0;margin-top:4px">
+        <div class="delivery-box" style="border-color:rgba(245,158,11,0.3)">
+          <h4 style="color:var(--yellow)">⏳ Awaiting Work Delivery</h4>
+          <p style="font-size:13px;color:var(--text2);margin-top:4px">
             The freelancer has been notified and is working on this job.
             This section updates once they submit their work.
           </p>
@@ -545,7 +644,7 @@ async function approveDelivery(job_id) {
   if (!confirm('Approve this delivery and release M-Pesa payment to the freelancer?')) return;
   try {
     await apiCall('POST', `/jobs/${job_id}/approve`);
-    alert('✅ Delivery approved! Payment released to freelancer via M-Pesa 💸');
+    alert('✅ Delivery approved! Payment released to freelancer via M-Pesa');
     loadMyJobs();
   } catch (e) { alert(`❌ ${e.message}`); }
 }
@@ -554,12 +653,11 @@ async function rejectDelivery(job_id) {
   if (!confirm('Reject this delivery? The freelancer will be notified to revise their work.')) return;
   try {
     await apiCall('POST', `/jobs/${job_id}/reject`);
-    alert('🔄 Delivery rejected. Freelancer notified via SMS to revise.');
+    alert('Delivery rejected. Freelancer notified via SMS to revise.');
     loadMyJobs();
   } catch (e) { alert(`❌ ${e.message}`); }
 }
 
-// ── Client: Post Job ──────────────────────────────────────────────────────────
 async function createJob() {
   const body = {
     client_id: currentUser.id,
@@ -571,21 +669,20 @@ async function createJob() {
   if (!body.title || !body.budget) { showAlert('alert-job', 'Title and budget are required', 'error'); return; }
   const btn = document.getElementById('post-job-btn');
   btn.disabled = true;
-  btn.textContent = '⏳ Posting...';
+  btn.textContent = 'Posting...';
   try {
-    showAlert('alert-job', '⚡ Posting job and triggering AI matching...', 'info');
+    showAlert('alert-job', 'Posting job and triggering AI matching...', 'info');
     const data = await apiCall('POST', '/jobs', body);
-    showAlert('alert-job', `✅ Job "${data.title}" posted (ID:${data.id})! Matched freelancers get SMS 📱`, 'success');
+    showAlert('alert-job', `Job "${data.title}" posted (ID:${data.id})! Matched freelancers get SMS`, 'success');
     ['job-title', 'job-description', 'job-skills', 'job-budget'].forEach(id => document.getElementById(id).value = '');
   } catch (e) {
-    showAlert('alert-job', `❌ ${e.message}`, 'error');
+    showAlert('alert-job', `${e.message}`, 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = '🚀 Post Job + Trigger AI Matching';
+    btn.textContent = 'Post Job + AI Matching';
   }
 }
 
-// ── Client: Escrow ────────────────────────────────────────────────────────────
 async function loadEscrow() {
   try {
     const jobs = await apiCall('GET', '/jobs');
@@ -598,10 +695,10 @@ async function loadEscrow() {
       <td>${statusBadge(j.status)}</td>
       <td>${
         j.status === 'open'
-          ? `<button class="btn btn-secondary btn-sm" onclick="goFundJob(${j.id},${j.budget})">Fund 💰</button>`
+          ? `<button class="btn btn-secondary btn-sm" onclick="goFundJob(${j.id},${j.budget})">Fund</button>`
           : j.status === 'in_progress'
-            ? `<button class="btn btn-warning btn-sm" onclick="goReleaseJob(${j.id})">Release 🚀</button>`
-            : '<span style="color:#c084a0;font-size:12px">✅ Done</span>'
+            ? `<button class="btn btn-warning btn-sm" onclick="goReleaseJob(${j.id})">Release</button>`
+            : '<span style="color:var(--text2);font-size:12px">✅ Done</span>'
       }</td></tr>`).join('');
   } catch (e) {
     document.getElementById('escrow-jobs-table').innerHTML = `<tr><td colspan="5" class="empty">❌ ${e.message}</td></tr>`;
@@ -649,12 +746,12 @@ async function fundEscrow() {
   if (!freelancer_id) { showAlert('alert-fund', 'Please select a freelancer to hire', 'error'); return; }
   if (!amount || amount <= 0) { showAlert('alert-fund', 'Please enter a valid amount', 'error'); return; }
   try {
-    showAlert('alert-fund', '⏳ Funding escrow...', 'info');
+    showAlert('alert-fund', 'Funding escrow...', 'info');
     const result = await apiCall('POST', '/escrow/fund', { job_id, freelancer_id, amount });
-    showAlert('alert-fund', `✅ KES ${amount.toLocaleString()} funded! ${result.freelancer_name} notified via SMS 📱`, 'success');
+    showAlert('alert-fund', `KES ${amount.toLocaleString()} funded! ${result.freelancer_name} notified via SMS`, 'success');
     loadEscrow();
     loadEscrowDropdowns();
-  } catch (e) { showAlert('alert-fund', `❌ ${e.message}`, 'error'); }
+  } catch (e) { showAlert('alert-fund', `${e.message}`, 'error'); }
 }
 
 async function releasePayment() {
@@ -663,20 +760,19 @@ async function releasePayment() {
   if (!confirm('Release payment to the freelancer via M-Pesa?')) return;
   try {
     await apiCall('POST', '/escrow/release', { job_id });
-    showAlert('alert-release', '✅ Payment released! Freelancer gets M-Pesa + SMS 💸', 'success');
+    showAlert('alert-release', 'Payment released! Freelancer gets M-Pesa + SMS', 'success');
     loadEscrow();
     loadEscrowDropdowns();
-  } catch (e) { showAlert('alert-release', `❌ ${e.message}`, 'error'); }
+  } catch (e) { showAlert('alert-release', `${e.message}`, 'error'); }
 }
 
-// ── Freelancer: My Matches ────────────────────────────────────────────────────
 async function loadMyMatches() {
   const el = document.getElementById('my-matches-list');
   el.innerHTML = '<div class="empty"><span class="spinner"></span>Loading...</div>';
   try {
     const profile = await apiCall('GET', `/profile/${currentUser.id}`);
     const matches = profile.matches || [];
-    if (!matches.length) { el.innerHTML = '<div class="empty">No matches yet. Check back after new jobs are posted! 🌸</div>'; return; }
+    if (!matches.length) { el.innerHTML = '<div class="empty">No matches yet. Check back after new jobs are posted!</div>'; return; }
 
     const cards = await Promise.all(matches.map(async m => {
       let job = null;
@@ -688,16 +784,16 @@ async function loadMyMatches() {
         if (delivery.status === 'rejected') {
           deliverySection = `
             <div class="delivery-box">
-              <h4>📤 Work Submitted — ${statusBadge(delivery.status)}</h4>
-              <p style="font-size:12px;color:#f87171;margin:8px 0">⚠️ Client requested revisions. Resubmit below.</p>
+              <h4>Work Submitted — ${statusBadge(delivery.status)}</h4>
+              <p style="font-size:12px;color:var(--red);margin:8px 0">Client requested revisions. Resubmit below.</p>
               ${deliverForm(m.job_id)}
             </div>`;
         } else {
           deliverySection = `
             <div class="delivery-box">
-              <h4>📤 Work Submitted — ${statusBadge(delivery.status)}</h4>
-              <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">🔗 ${delivery.delivery_link}</a>
-              <p style="font-size:12px;color:#c084a0;margin-top:6px">${delivery.status === 'approved' ? '✅ Payment released to your M-Pesa!' : '⏳ Waiting for client review...'}</p>
+              <h4>Work Submitted — ${statusBadge(delivery.status)}</h4>
+              <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">${delivery.delivery_link}</a>
+              <p style="font-size:12px;color:var(--text2);margin-top:6px">${delivery.status === 'approved' ? '✅ Payment released to your M-Pesa!' : '⏳ Waiting for client review...'}</p>
             </div>`;
         }
       } catch (e) {
@@ -705,12 +801,12 @@ async function loadMyMatches() {
         if (jobStatus === 'in_progress') {
           deliverySection = `
             <div class="delivery-box">
-              <h4>📤 Submit Your Work</h4>
-              <p style="font-size:12px;color:#4ade80;margin-bottom:10px">✅ You've been hired! Submit your completed work below.</p>
+              <h4>Submit Your Work</h4>
+              <p style="font-size:12px;color:var(--green);margin-bottom:10px">You've been hired! Submit your completed work below.</p>
               ${deliverForm(m.job_id)}
             </div>`;
         } else if (jobStatus === 'open') {
-          deliverySection = `<p style="font-size:12px;color:#c084a0;margin-top:8px">⏳ Waiting for client to fund escrow...</p>`;
+          deliverySection = `<p style="font-size:12px;color:var(--text2);margin-top:8px">⏳ Waiting for client to fund escrow...</p>`;
         }
       }
 
@@ -718,11 +814,11 @@ async function loadMyMatches() {
         <div class="card" style="margin-bottom:16px">
           <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
             <h3>${job ? job.title : 'Job #' + m.job_id}</h3>
-            <span style="font-size:18px;font-weight:700;color:#f472b6">${(m.score * 100).toFixed(0)}%</span>
+            <span style="font-size:18px;font-weight:700;color:var(--accent2)">${(m.score * 100).toFixed(0)}%</span>
           </div>
-          ${job ? `<p style="font-size:13px;color:#c084a0;margin-bottom:8px">💰 KES ${Number(job.budget).toLocaleString()} &nbsp;|&nbsp; ${statusBadge(job.status)}</p>` : ''}
+          ${job ? `<p style="font-size:13px;color:var(--text2);margin-bottom:8px">KES ${Number(job.budget).toLocaleString()} · ${statusBadge(job.status)}</p>` : ''}
           <div class="match-score-bar" style="margin-bottom:12px"><div class="match-score-fill" style="width:${m.score * 100}%"></div></div>
-          ${job && job.status === 'open' ? `<button class="btn btn-secondary btn-sm" onclick="applyToJob(${m.job_id}, this)" style="margin-bottom:12px">Apply Now 💌</button>` : ''}
+          ${job && job.status === 'open' ? `<button class="btn btn-secondary btn-sm" onclick="applyToJob(${m.job_id}, this)" style="margin-bottom:12px">Apply Now</button>` : ''}
           ${deliverySection}
         </div>`;
     }));
@@ -731,14 +827,12 @@ async function loadMyMatches() {
   } catch (e) { el.innerHTML = `<div class="empty">❌ ${e.message}</div>`; }
 }
 
-// ── Freelancer: My Applications ───────────────────────────────────────────────
 async function loadMyApplications() {
   const el = document.getElementById('my-applications-list');
   el.innerHTML = '<div class="empty"><span class="spinner"></span>Loading...</div>';
   try {
-    // ✅ Fix: get all jobs first, then check matches in parallel — much faster
     const [jobs] = await Promise.all([apiCall('GET', '/jobs')]);
-    if (!jobs.length) { el.innerHTML = '<div class="empty">No jobs on platform yet 🌸</div>'; return; }
+    if (!jobs.length) { el.innerHTML = '<div class="empty">No jobs on platform yet</div>'; return; }
 
     const matchChecks = await Promise.all(jobs.map(async j => {
       try {
@@ -750,11 +844,10 @@ async function loadMyApplications() {
 
     const applied = matchChecks.filter(Boolean);
     if (!applied.length) {
-      el.innerHTML = '<div class="empty">You haven\'t applied to any jobs yet. Go to 💼 Browse Jobs! 🌸</div>';
+      el.innerHTML = '<div class="empty">You haven\'t applied to any jobs yet. Go to Browse Jobs!</div>';
       return;
     }
 
-    // Sort: in_progress first, then open, then completed
     const order = { in_progress: 0, open: 1, completed: 2 };
     applied.sort((a, b) => (order[a.job.status] ?? 9) - (order[b.job.status] ?? 9));
 
@@ -766,16 +859,16 @@ async function loadMyApplications() {
           if (delivery.status === 'rejected') {
             deliverySection = `
               <div class="delivery-box">
-                <h4>📤 Work Submitted — ${statusBadge(delivery.status)}</h4>
-                <p style="font-size:12px;color:#f87171;margin:8px 0">⚠️ Client requested revisions. Resubmit below.</p>
+                <h4>Work Submitted — ${statusBadge(delivery.status)}</h4>
+                <p style="font-size:12px;color:var(--red);margin:8px 0">Client requested revisions. Resubmit below.</p>
                 ${deliverForm(j.id)}
               </div>`;
           } else {
             deliverySection = `
               <div class="delivery-box">
-                <h4>📤 Work Submitted — ${statusBadge(delivery.status)}</h4>
-                <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">🔗 ${delivery.delivery_link}</a>
-                <p style="font-size:12px;color:#c084a0;margin-top:6px">${delivery.status === 'approved' ? '✅ Payment released to your M-Pesa!' : '⏳ Waiting for client to approve...'}</p>
+                <h4>Work Submitted — ${statusBadge(delivery.status)}</h4>
+                <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">${delivery.delivery_link}</a>
+                <p style="font-size:12px;color:var(--text2);margin-top:6px">${delivery.status === 'approved' ? '✅ Payment released to your M-Pesa!' : '⏳ Waiting for client to approve...'}</p>
               </div>`;
           }
         }
@@ -783,12 +876,12 @@ async function loadMyApplications() {
         if (j.status === 'in_progress') {
           deliverySection = `
             <div class="delivery-box">
-              <h4>📤 Submit Your Work</h4>
-              <p style="font-size:12px;color:#4ade80;margin-bottom:10px">✅ You've been hired! Submit your completed work below.</p>
+              <h4>Submit Your Work</h4>
+              <p style="font-size:12px;color:var(--green);margin-bottom:10px">You've been hired! Submit your completed work below.</p>
               ${deliverForm(j.id)}
             </div>`;
         } else if (j.status === 'open') {
-          deliverySection = `<p style="font-size:12px;color:#c084a0;margin-top:8px">⏳ Waiting for client to fund escrow and confirm you...</p>`;
+          deliverySection = `<p style="font-size:12px;color:var(--text2);margin-top:8px">⏳ Waiting for client to fund escrow and confirm you...</p>`;
         }
       }
 
@@ -797,13 +890,13 @@ async function loadMyApplications() {
           <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
             <div>
               <h3>#${j.id} — ${j.title}</h3>
-              <p style="font-size:13px;color:#c084a0;margin-top:4px">${j.description || ''}</p>
+              <p style="font-size:13px;color:var(--text2);margin-top:4px">${j.description || ''}</p>
             </div>
             ${statusBadge(j.status)}
           </div>
-          <p style="font-size:13px;color:#c084a0;margin-bottom:10px">
-            💰 KES ${Number(j.budget).toLocaleString()}
-            &nbsp;|&nbsp; Match Score: <strong style="color:#f472b6">${(myMatch.score * 100).toFixed(0)}%</strong>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px">
+            KES ${Number(j.budget).toLocaleString()}
+            · Match Score: <strong style="color:var(--accent2)">${(myMatch.score * 100).toFixed(0)}%</strong>
           </p>
           <div class="match-score-bar" style="margin-bottom:12px">
             <div class="match-score-fill" style="width:${myMatch.score * 100}%"></div>
@@ -818,43 +911,40 @@ async function loadMyApplications() {
   }
 }
 
-// ── Freelancer: Browse Jobs ───────────────────────────────────────────────────
 async function loadBrowseJobs() {
   const el = document.getElementById('browse-jobs-list');
   el.innerHTML = '<div class="empty"><span class="spinner"></span>Loading...</div>';
   try {
     const jobs = await apiCall('GET', '/jobs?status=open');
-    if (!jobs.length) { el.innerHTML = '<div class="empty">No open jobs right now 🌸</div>'; return; }
+    if (!jobs.length) { el.innerHTML = '<div class="empty">No open jobs right now</div>'; return; }
     el.innerHTML = jobs.map(j => `
       <div class="card" style="margin-bottom:16px">
         <div style="display:flex;justify-content:space-between;align-items:start">
           <div>
             <h3>#${j.id} — ${j.title}</h3>
-            <p style="font-size:13px;color:#c084a0;margin:6px 0">${j.description || 'No description'}</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-              ${(Array.isArray(j.skills_required) ? j.skills_required : (j.skills_required || '').split(',')).map(s => `<span class="skill-tag">${s.trim()}</span>`).join('')}
+            <p style="font-size:13px;color:var(--text2);margin:6px 0">${j.description || 'No description'}</p>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+              ${parseSkills(j.skills_required).map(s => `<span class="skill-tag">${s}</span>`).join('')}
             </div>
           </div>
           <div style="text-align:right;flex-shrink:0;margin-left:16px">
-            <div style="font-size:18px;font-weight:700;color:#f472b6">KES ${Number(j.budget).toLocaleString()}</div>
+            <div style="font-size:18px;font-weight:700;color:var(--accent2)">KES ${Number(j.budget).toLocaleString()}</div>
             ${statusBadge(j.status)}
           </div>
         </div>
         <div style="margin-top:14px">
-          <button class="btn btn-secondary btn-sm" id="apply-btn-${j.id}" onclick="applyToJob(${j.id}, this)">Apply Now 💌</button>
+          <button class="btn btn-secondary btn-sm" id="apply-btn-${j.id}" onclick="applyToJob(${j.id}, this)">Apply Now</button>
         </div>
       </div>`).join('');
   } catch (e) { el.innerHTML = `<div class="empty">❌ ${e.message}</div>`; }
 }
 
-// ✅ Fix: single applyToJob function — no duplicate, has loading state
 async function applyToJob(job_id, btnEl) {
   if (!currentUser || currentUser.role !== 'freelancer') return;
-  if (btnEl) { btnEl.disabled = true; btnEl.textContent = '⏳ Applying...'; }
+  if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'Applying...'; }
   try {
     const data = await apiCall('POST', `/jobs/${job_id}/apply`, { freelancer_id: currentUser.id });
-    alert(`✅ ${data.message}\n📱 Client has been notified!`);
-    // Refresh the active page
+    alert(`✅ ${data.message}\nClient has been notified!`);
     const activePage = document.querySelector('.page.active');
     if (activePage) {
       const pageId = activePage.id.replace('page-', '');
@@ -864,11 +954,10 @@ async function applyToJob(job_id, btnEl) {
     }
   } catch (e) {
     alert(`❌ ${e.message}`);
-    if (btnEl) { btnEl.disabled = false; btnEl.textContent = 'Apply Now 💌'; }
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = 'Apply Now'; }
   }
 }
 
-// ── Deliver Work ──────────────────────────────────────────────────────────────
 function deliverForm(jobId) {
   return `
     <div class="form-group" style="margin-top:10px">
@@ -879,10 +968,9 @@ function deliverForm(jobId) {
       <label>Message to Client</label>
       <textarea class="deliver-msg" placeholder="Describe what you completed..." style="min-height:60px"></textarea>
     </div>
-    <button class="btn btn-secondary btn-sm" onclick="deliverWork(${jobId}, this)">📤 Submit Work</button>`;
+    <button class="btn btn-secondary btn-sm" onclick="deliverWork(${jobId}, this)">Submit Work</button>`;
 }
 
-// ✅ Fix: clear error feedback, loading state, proper element lookup scoped to button click
 async function deliverWork(job_id, btnEl) {
   const box = btnEl.closest('.delivery-box');
   const linkEl = box ? box.querySelector('.deliver-link') : null;
@@ -897,10 +985,10 @@ async function deliverWork(job_id, btnEl) {
   const link    = linkEl.value.trim();
   const message = msgEl.value.trim();
 
-  if (!link)    { alert('⚠️ Please paste your work link (Google Drive, GitHub, Figma, etc)'); return; }
-  if (!message) { alert('⚠️ Please write a short message to the client'); return; }
+  if (!link)    { alert('Please paste your work link (Google Drive, GitHub, Figma, etc)'); return; }
+  if (!message) { alert('Please write a short message to the client'); return; }
 
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Submitting...'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
 
   try {
     await apiCall('POST', `/jobs/${job_id}/deliver`, {
@@ -908,8 +996,7 @@ async function deliverWork(job_id, btnEl) {
       delivery_link: link,
       message: message,
     });
-    alert('✅ Work submitted successfully!\n\nThe client has been notified via SMS 📱\nThey will review and release payment once approved.');
-    // Refresh active page
+    alert('✅ Work submitted successfully!\n\nThe client has been notified via SMS.\nThey will review and release payment once approved.');
     const activePage = document.querySelector('.page.active');
     if (activePage) {
       const pageId = activePage.id.replace('page-', '');
@@ -918,11 +1005,10 @@ async function deliverWork(job_id, btnEl) {
     }
   } catch (e) {
     alert(`❌ Submission failed: ${e.message}`);
-    if (btn) { btn.disabled = false; btn.textContent = '📤 Submit Work'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Submit Work'; }
   }
 }
 
-// ── Freelancers Directory ─────────────────────────────────────────────────────
 let allFreelancers = [];
 async function loadFreelancers() {
   try {
@@ -934,14 +1020,14 @@ async function loadFreelancers() {
 
 function renderFreelancers(list) {
   const el = document.getElementById('freelancer-grid');
-  if (!list.length) { el.innerHTML = '<div class="empty">No freelancers found 🌸</div>'; return; }
+  if (!list.length) { el.innerHTML = '<div class="empty">No freelancers found</div>'; return; }
   el.innerHTML = list.map(f => {
-    const skills = Array.isArray(f.skills) ? f.skills : (f.skills || '').split(',').map(s => s.trim()).filter(Boolean);
+    const skills = parseSkills(f.skills);
     return `<div class="freelancer-card">
-      <div class="freelancer-name">💕 ${f.name}</div>
-      <div class="freelancer-location">📍 ${f.location || 'Unknown'} &nbsp;|&nbsp; ID:${f.id}</div>
+      <div class="freelancer-name">${f.name}</div>
+      <div class="freelancer-location">📍 ${f.location || 'Unknown'} · ID:${f.id}</div>
       <div class="skill-tags">${skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}</div>
-      <div style="margin-top:10px;font-size:12px;color:#c084a0">✅ ${f.jobs_completed || 0} completed &nbsp;|&nbsp; 📋 ${f.jobs_applied || 0} applied</div>
+      <div style="margin-top:10px;font-size:12px;color:var(--text2)">✅ ${f.jobs_completed || 0} completed · 📋 ${f.jobs_applied || 0} applied</div>
     </div>`;
   }).join('');
 }
@@ -949,18 +1035,37 @@ function renderFreelancers(list) {
 function filterFreelancers() {
   const q = document.getElementById('freelancer-search').value.toLowerCase();
   renderFreelancers(allFreelancers.filter(f => {
-    const s = Array.isArray(f.skills) ? f.skills.join(',') : (f.skills || '');
+    const s = parseSkills(f.skills).join(',');
     return f.name.toLowerCase().includes(q) || s.toLowerCase().includes(q);
   }));
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
 try {
   const saved = localStorage.getItem('trustgig_user');
   if (saved) { currentUser = JSON.parse(saved); initApp(); }
 } catch (e) {
   localStorage.removeItem('trustgig_user');
 }
+
+// ── Theme toggle ───────────────────────────────────────────────────────────────
+function _applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const icon = theme === 'light' ? '☀️' : '🌙';
+  const btnApp  = document.getElementById('theme-btn-app');
+  const btnAuth = document.getElementById('theme-btn-auth');
+  if (btnApp)  btnApp.textContent  = icon;
+  if (btnAuth) btnAuth.textContent = icon;
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  _applyTheme(next);
+  localStorage.setItem('tg_theme', next);
+}
+
+// Restore saved theme on load
+_applyTheme(localStorage.getItem('tg_theme') || 'dark');
 </script>
 </body>
 </html>
