@@ -20,7 +20,6 @@
   --shadow:0 4px 24px rgba(0,0,0,0.4);
   --shadow-lg:0 8px 40px rgba(0,0,0,0.5);
 }
-/* Light theme */
 [data-theme="light"]{
   --bg:#f0f0f8;--surface:#ffffff;--surface2:#e8e8f4;--surface3:#dcdcec;
   --border:#d4d4e8;--border-hover:#b4b4cc;
@@ -34,20 +33,13 @@
 [data-theme="light"] .freelancer-card:hover{box-shadow:0 4px 20px rgba(108,92,231,0.12);}
 [data-theme="light"] select option{background:#fff;color:#1a1a2e;}
 [data-theme="light"] nav{background:rgba(255,255,255,0.85);}
-
-/* Theme toggle button */
 .theme-toggle{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all 0.2s;flex-shrink:0;}
 .theme-toggle:hover{border-color:var(--accent);color:var(--accent);transform:rotate(20deg);}
-
 body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;transition:background 0.3s,color 0.3s;}
-
-/* Scrollbar */
 ::-webkit-scrollbar{width:6px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--border-hover);}
-
-/* Nav */
 nav{background:rgba(18,18,26,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
 .logo{font-size:20px;font-weight:800;background:var(--gradient2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px;}
 .nav-tabs{display:flex;gap:4px;background:var(--surface);border-radius:var(--radius-sm);padding:4px;}
@@ -58,18 +50,13 @@ nav{background:rgba(18,18,26,0.8);backdrop-filter:blur(20px);-webkit-backdrop-fi
 .nav-user-name{font-size:13px;color:var(--accent2);font-weight:600;}
 .nav-logout{padding:6px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-weight:500;transition:all 0.2s;}
 .nav-logout:hover{background:var(--surface2);color:var(--text);border-color:var(--border-hover);}
-
-/* Pages */
 .page{display:none;padding:32px;max-width:1100px;margin:0 auto;animation:fadeIn 0.3s ease;}
 .page.active{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
 h1{font-size:24px;font-weight:700;margin-bottom:6px;color:var(--text);letter-spacing:-0.3px;}
 h2{font-size:17px;font-weight:600;margin-bottom:14px;color:var(--text);}
 h3{font-size:15px;font-weight:600;margin-bottom:10px;color:var(--text);}
 p.subtitle{color:var(--text2);margin-bottom:28px;font-size:14px;}
-
-/* Auth */
 .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;background:radial-gradient(ellipse at 50% 0%,#1a1a3a 0%,var(--bg) 70%);}
 .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);}
 .auth-logo{text-align:center;margin-bottom:32px;}
@@ -78,14 +65,10 @@ p.subtitle{color:var(--text2);margin-bottom:28px;font-size:14px;}
 .auth-tabs{display:flex;background:var(--bg);border-radius:var(--radius-sm);padding:4px;margin-bottom:24px;}
 .auth-tab{flex:1;padding:10px;text-align:center;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);border:none;background:transparent;transition:all 0.2s;}
 .auth-tab.active{background:var(--gradient);color:white;font-weight:600;box-shadow:0 2px 12px var(--accent-glow);}
-
-/* Cards */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;transition:border-color 0.2s;}
 .card:hover{border-color:var(--border-hover);}
 .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 @media(max-width:700px){.card-grid{grid-template-columns:1fr;}}
-
-/* Forms */
 .form-group{margin-bottom:16px;}
 label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
 input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:all 0.2s;}
@@ -93,8 +76,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
 input::placeholder,textarea::placeholder{color:var(--text2);opacity:0.5;}
 textarea{resize:vertical;min-height:80px;}
 select option{background:var(--surface);}
-
-/* Buttons */
 .btn{padding:10px 20px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
 .btn-primary{background:var(--gradient);color:white;width:100%;justify-content:center;box-shadow:0 2px 12px var(--accent-glow);}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px var(--accent-glow);}
@@ -106,31 +87,23 @@ select option{background:var(--surface);}
 .btn-danger:hover{background:rgba(239,68,68,0.2);}
 .btn-sm{padding:6px 14px;font-size:12px;border-radius:6px;}
 .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none !important;}
-
-/* Stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
 @media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr);}}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;transition:all 0.2s;}
 .stat:hover{border-color:var(--accent);box-shadow:0 0 20px var(--accent-glow);}
 .stat-value{font-size:32px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .stat-label{font-size:12px;color:var(--text2);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;}
-
-/* Tables */
 .table-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 th{background:var(--surface2);padding:12px 16px;text-align:left;color:var(--text2);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;}
 td{padding:12px 16px;border-top:1px solid var(--border);}
 tr:hover td{background:var(--surface2);}
-
-/* Badges */
 .badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase;}
 .badge-green{background:rgba(16,185,129,0.15);color:var(--green);}
 .badge-yellow{background:rgba(245,158,11,0.15);color:var(--yellow);}
 .badge-blue{background:rgba(59,130,246,0.15);color:var(--blue);}
 .badge-gray{background:rgba(148,148,176,0.1);color:var(--text2);}
 .badge-orange{background:rgba(249,115,22,0.15);color:var(--orange);}
-
-/* Match cards */
 .match-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;transition:all 0.2s;}
 .match-card:hover{border-color:var(--border-hover);background:var(--surface2);}
 .match-rank{width:34px;height:34px;border-radius:50%;background:var(--gradient);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
@@ -142,8 +115,6 @@ tr:hover td{background:var(--surface2);}
 .match-score-bar{height:4px;background:var(--surface3);border-radius:2px;margin-top:8px;overflow:hidden;}
 .match-score-fill{height:100%;border-radius:2px;background:var(--gradient);}
 .match-score-text{font-size:16px;font-weight:700;color:var(--accent2);flex-shrink:0;}
-
-/* Freelancer grid */
 .freelancer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
 .freelancer-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:all 0.2s;}
 .freelancer-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,0.3);}
@@ -151,18 +122,12 @@ tr:hover td{background:var(--surface2);}
 .freelancer-location{color:var(--text2);font-size:12px;margin-bottom:12px;}
 .skill-tags{display:flex;flex-wrap:wrap;gap:6px;}
 .skill-tag{background:rgba(108,92,231,0.15);color:var(--accent2);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;}
-
-/* Alerts */
 .alert{padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:13px;display:none;font-weight:500;}
 .alert-success{background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.2);}
 .alert-error{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);}
 .alert-info{background:rgba(59,130,246,0.1);color:var(--blue);border:1px solid rgba(59,130,246,0.2);}
-
-/* Spinner */
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* Misc */
 .empty{text-align:center;padding:40px;color:var(--text2);font-size:14px;}
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
 .hint{font-size:12px;color:var(--text2);margin-top:10px;line-height:1.5;}
@@ -178,8 +143,18 @@ tr:hover td{background:var(--surface2);}
 .delivery-link{color:var(--accent2);font-size:13px;word-break:break-all;text-decoration:none;}
 .delivery-link:hover{text-decoration:underline;}
 .delivery-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
-
-/* Responsive nav */
+/* AI Feature styles */
+.ai-feature-tab{padding:8px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;border:none;background:transparent;color:var(--text2);transition:all 0.2s;white-space:nowrap;}
+.ai-feature-tab:hover{color:var(--text);background:var(--surface2);}
+.ai-feature-tab.active{background:var(--gradient);color:white;font-weight:600;box-shadow:0 2px 12px var(--accent-glow);}
+.ai-output{font-size:13px;line-height:1.75;color:var(--text);white-space:pre-wrap;word-break:break-word;}
+.ai-output strong,.ai-output b{color:var(--accent2);font-weight:600;}
+.ai-thinking{display:flex;align-items:center;gap:10px;padding:16px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--text2);}
+.ai-thinking-dots{display:inline-flex;gap:4px;}
+.ai-thinking-dots span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:dotpulse 1.2s infinite;}
+.ai-thinking-dots span:nth-child(2){animation-delay:0.2s;}
+.ai-thinking-dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes dotpulse{0%,80%,100%{opacity:0.3;transform:scale(0.8);}40%{opacity:1;transform:scale(1);}}
 @media(max-width:768px){
   nav{padding:0 16px;gap:8px;}
   .nav-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -360,20 +335,175 @@ tr:hover td{background:var(--surface2);}
       <div id="freelancer-grid" class="freelancer-grid"><div class="empty">Loading...</div></div>
     </div>
   </div>
-</div>
+
+  <!-- AI TOOLS PAGE -->
+  <div id="page-ai" class="page">
+    <h1>AI Tools</h1>
+    <p class="subtitle">Powered by Claude AI — improve postings, coach profiles, explain matches, and more</p>
+
+    <div style="display:flex;gap:4px;background:var(--surface);border-radius:8px;padding:4px;margin-bottom:24px;overflow-x:auto;">
+      <button class="ai-feature-tab active" onclick="switchAITab('improve-job',this)">Job Improvement</button>
+      <button class="ai-feature-tab" onclick="switchAITab('coach-profile',this)">Profile Coach</button>
+      <button class="ai-feature-tab" onclick="switchAITab('explain-match',this)">Match Explainer</button>
+      <button class="ai-feature-tab" onclick="switchAITab('trust-score',this)">TrustScore</button>
+      <button class="ai-feature-tab" onclick="switchAITab('review-analysis',this)">Review Analysis</button>
+    </div>
+
+    <!-- 1. Job Improvement -->
+    <div id="ai-panel-improve-job" class="ai-panel">
+      <div class="card-grid">
+        <div class="card">
+          <h2>Job Posting Improvement</h2>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Paste a rough job description and get a polished, clear posting with suggested deliverables and budget.</p>
+          <div class="form-group"><label>Job Title</label><input type="text" id="ai-job-title" placeholder="e.g. Build a React dashboard"></div>
+          <div class="form-group"><label>Description</label><textarea id="ai-job-desc" placeholder="Describe the job..." style="min-height:100px"></textarea></div>
+          <div class="form-group"><label>Skills Required</label><input type="text" id="ai-job-skills" placeholder="python, pandas (optional)"></div>
+          <div class="form-group"><label>Budget (KES)</label><input type="number" id="ai-job-budget" placeholder="e.g. 8000 (optional)"></div>
+          <button class="btn btn-primary" id="ai-improve-btn" onclick="runImproveJob()">✨ Improve Job Posting</button>
+        </div>
+        <div class="card" id="ai-improve-result" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <h2>Improved Posting</h2>
+            <span style="font-size:11px;background:rgba(108,92,231,0.15);color:var(--accent2);padding:4px 10px;border-radius:20px;font-weight:600">Claude AI</span>
+          </div>
+          <div id="ai-improve-output" class="ai-output"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Profile Coach -->
+    <div id="ai-panel-coach-profile" class="ai-panel" style="display:none">
+      <div class="card-grid">
+        <div class="card">
+          <h2>Profile Coach</h2>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Get AI coaching on how to improve your freelancer profile and increase match likelihood.</p>
+          <div class="form-group"><label>Your Name</label><input type="text" id="ai-coach-name" placeholder="e.g. Mercy Wanjiru"></div>
+          <div class="form-group"><label>Your Skills (comma-separated)</label><input type="text" id="ai-coach-skills" placeholder="python, pandas, data analysis"></div>
+          <div class="form-group"><label>Experience Level</label>
+            <select id="ai-coach-exp">
+              <option value="beginner">Beginner</option>
+              <option value="intermediate" selected>Intermediate</option>
+              <option value="expert">Expert</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Location</label><input type="text" id="ai-coach-location" placeholder="Nairobi"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group"><label>Jobs Applied</label><input type="number" id="ai-coach-applied" placeholder="10"></div>
+            <div class="form-group"><label>Jobs Completed</label><input type="number" id="ai-coach-completed" placeholder="8"></div>
+          </div>
+          <button class="btn btn-primary" id="ai-coach-btn" onclick="runProfileCoach()">✨ Get Coaching</button>
+          <p class="hint">💡 Fields auto-fill from your profile if you're logged in as a freelancer</p>
+        </div>
+        <div class="card" id="ai-coach-result" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <h2>Your Coaching Report</h2>
+            <span style="font-size:11px;background:rgba(16,185,129,0.15);color:var(--green);padding:4px 10px;border-radius:20px;font-weight:600">Profile Coach</span>
+          </div>
+          <div id="ai-coach-output" class="ai-output"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Match Explainer -->
+    <div id="ai-panel-explain-match" class="ai-panel" style="display:none">
+      <div class="card">
+        <h2>Match Explainer</h2>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Select a job and a freelancer to get a human-readable explanation of why they match (or don't).</p>
+        <div class="card-grid">
+          <div>
+            <h3>Job</h3>
+            <div class="form-group"><label>Select Job</label><select id="ai-match-job" onchange="loadMatchJobPreview()"><option value="">— Select a job —</option></select></div>
+            <div id="ai-match-job-preview" style="font-size:12px;color:var(--text2);margin-top:-8px;margin-bottom:12px"></div>
+          </div>
+          <div>
+            <h3>Freelancer</h3>
+            <div class="form-group"><label>Select Freelancer</label><select id="ai-match-freelancer"><option value="">— Select a freelancer —</option></select></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="ai-match-btn" onclick="runMatchExplainer()">✨ Explain This Match</button>
+      </div>
+      <div class="card" id="ai-match-result" style="display:none;margin-top:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <h2>Match Analysis</h2>
+          <span style="font-size:11px;background:rgba(59,130,246,0.15);color:var(--blue);padding:4px 10px;border-radius:20px;font-weight:600">AI Reasoning</span>
+        </div>
+        <div id="ai-match-output" class="ai-output"></div>
+      </div>
+    </div>
+
+    <!-- 4. TrustScore -->
+    <div id="ai-panel-trust-score" class="ai-panel" style="display:none">
+      <div class="card-grid">
+        <div class="card">
+          <h2>TrustScore Explainer</h2>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Generate a readable reliability report for any freelancer based on their job history.</p>
+          <div class="form-group"><label>Select Freelancer</label>
+            <select id="ai-trust-freelancer"><option value="">— Select a freelancer —</option></select>
+          </div>
+          <div class="form-group"><label>Client Reviews (one per line, optional)</label>
+            <textarea id="ai-trust-reviews" placeholder="e.g. Delivered 2 days late but quality was good&#10;Very responsive and professional" style="min-height:100px"></textarea>
+          </div>
+          <button class="btn btn-primary" id="ai-trust-btn" onclick="runTrustScore()">✨ Generate TrustScore Report</button>
+        </div>
+        <div class="card" id="ai-trust-result" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <h2>TrustScore Report</h2>
+            <span style="font-size:11px;background:rgba(245,158,11,0.15);color:var(--yellow);padding:4px 10px;border-radius:20px;font-weight:600">Trust Analysis</span>
+          </div>
+          <div id="ai-trust-output" class="ai-output"></div>
+          <div id="ai-trust-badge" style="margin-top:16px;display:none">
+            <div id="ai-trust-badge-inner" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Review Analysis -->
+    <div id="ai-panel-review-analysis" class="ai-panel" style="display:none">
+      <div class="card-grid">
+        <div class="card">
+          <h2>Review & Dispute Analysis</h2>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Paste multiple client reviews to detect patterns and get TrustScore adjustment recommendations.</p>
+          <div class="form-group"><label>Freelancer Name</label><input type="text" id="ai-review-name" placeholder="e.g. James Otieno"></div>
+          <div class="form-group"><label>Reviews (one per line — minimum 2)</label>
+            <textarea id="ai-review-text" style="min-height:140px" placeholder="e.g.&#10;Great work, delivered on time!&#10;Took longer than expected but quality was excellent.&#10;Didn't follow the brief properly, needed revisions.&#10;Very professional and easy to work with."></textarea>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group"><label>Current Completion Rate (%)</label><input type="number" id="ai-review-rate" placeholder="e.g. 80" min="0" max="100"></div>
+            <div class="form-group"><label>Current Trust Label</label>
+              <select id="ai-review-label">
+                <option value="Highly Trusted">Highly Trusted</option>
+                <option value="Trusted" selected>Trusted</option>
+                <option value="Use With Caution">Use With Caution</option>
+                <option value="Not Recommended">Not Recommended</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="ai-review-btn" onclick="runReviewAnalysis()">✨ Analyze Reviews</button>
+        </div>
+        <div class="card" id="ai-review-result" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <h2>Review Analysis</h2>
+            <span style="font-size:11px;background:rgba(239,68,68,0.15);color:var(--red);padding:4px 10px;border-radius:20px;font-weight:600">Pattern Detection</span>
+          </div>
+          <div id="ai-review-output" class="ai-output"></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- end page-ai -->
+
+</div><!-- end app-page -->
 
 <script>
 const API = "https://trustgig-backend.onrender.com";
+const AI_API = "https://trustgig-backend.onrender.com/ai";
 let currentUser = null;
+let _allJobs = [];
+let _allFreelancers = [];
 
-// ── Skills parser — handles all storage formats ───────────────────────────────
-// Covers: JS array, JSON string "["a","b"]", PostgreSQL literal {"a","b"}, CSV "a,b"
 function parseSkills(raw) {
   if (!raw) return [];
   if (Array.isArray(raw)) {
-    // Detect character-per-element corruption: first element is '{' means the whole
-    // PostgreSQL array literal was split into individual chars when saved to DB.
-    // Re-join and fall through to string parsing.
     if (raw[0] === '{' || (raw.length > 4 && raw.every(x => typeof x === 'string' && x.length <= 2))) {
       raw = raw.join('');
     } else {
@@ -382,12 +512,12 @@ function parseSkills(raw) {
   }
   if (typeof raw !== 'string') return [];
   const s = raw.trim();
-  if (s.startsWith('{') && s.endsWith('}'))          // PostgreSQL: {"Machine learning","python"}
+  if (s.startsWith('{') && s.endsWith('}'))
     return s.slice(1, -1).split(',').map(x => x.replace(/^"|"$/g, '').trim()).filter(Boolean);
-  if (s.startsWith('[')) {                            // JSON string: ["python","ml"]
+  if (s.startsWith('[')) {
     try { const p = JSON.parse(s); return Array.isArray(p) ? p.map(String).filter(Boolean) : []; } catch(e) {}
   }
-  return s.split(',').map(x => x.trim()).filter(Boolean); // plain CSV
+  return s.split(',').map(x => x.trim()).filter(Boolean);
 }
 
 async function apiCall(method, path, body = null) {
@@ -486,7 +616,8 @@ function initApp() {
       <button class="nav-tab" onclick="showPage('myjobs',this)">My Jobs</button>
       <button class="nav-tab" onclick="showPage('postjob',this)">Post Job</button>
       <button class="nav-tab" onclick="showPage('escrow',this)">Escrow</button>
-      <button class="nav-tab" onclick="showPage('freelancers',this)">Freelancers</button>`;
+      <button class="nav-tab" onclick="showPage('freelancers',this)">Freelancers</button>
+      <button class="nav-tab" onclick="showPage('ai',this)">AI Tools</button>`;
     loadOverview();
   } else {
     document.getElementById('welcome-sub').textContent = 'Find jobs that match your skills';
@@ -497,7 +628,8 @@ function initApp() {
       <button class="nav-tab" onclick="showPage('mymatches',this)">My Matches</button>
       <button class="nav-tab" onclick="showPage('myapplications',this)">Applications</button>
       <button class="nav-tab" onclick="showPage('browsejobs',this)">Browse Jobs</button>
-      <button class="nav-tab" onclick="showPage('freelancers',this)">Freelancers</button>`;
+      <button class="nav-tab" onclick="showPage('freelancers',this)">Freelancers</button>
+      <button class="nav-tab" onclick="showPage('ai',this)">AI Tools</button>`;
     loadOverview();
     loadMyMatches();
   }
@@ -515,6 +647,7 @@ function showPage(name, btn) {
   if (name === 'mymatches') loadMyMatches();
   if (name === 'myapplications') loadMyApplications();
   if (name === 'browsejobs') loadBrowseJobs();
+  if (name === 'ai') loadAIPage();
 }
 
 async function loadOverview() {
@@ -566,7 +699,6 @@ async function loadMyJobs() {
     const jobs = await apiCall('GET', '/jobs');
     const mine = jobs.filter(j => j.client_id === currentUser.id);
     if (!mine.length) { el.innerHTML = '<div class="empty">No jobs posted yet. Post your first job!</div>'; return; }
-
     el.innerHTML = mine.map(j => `
       <div class="card" style="margin-bottom:16px" id="job-card-${j.id}">
         <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
@@ -579,7 +711,6 @@ async function loadMyJobs() {
         <div id="matches-${j.id}"><span class="spinner"></span> Loading applicants...</div>
         <div id="delivery-${j.id}"></div>
       </div>`).join('');
-
     mine.forEach(j => { loadJobMatches(j.id); loadDeliveryForClient(j.id); });
   } catch (e) { el.innerHTML = `<div class="empty">❌ ${e.message}</div>`; }
 }
@@ -629,10 +760,7 @@ async function loadDeliveryForClient(jobId) {
       el.innerHTML = `
         <div class="delivery-box" style="border-color:rgba(245,158,11,0.3)">
           <h4 style="color:var(--yellow)">⏳ Awaiting Work Delivery</h4>
-          <p style="font-size:13px;color:var(--text2);margin-top:4px">
-            The freelancer has been notified and is working on this job.
-            This section updates once they submit their work.
-          </p>
+          <p style="font-size:13px;color:var(--text2);margin-top:4px">The freelancer has been notified and is working on this job. This section updates once they submit their work.</p>
         </div>`;
     } else {
       el.innerHTML = '';
@@ -773,56 +901,36 @@ async function loadMyMatches() {
     const profile = await apiCall('GET', `/profile/${currentUser.id}`);
     const matches = profile.matches || [];
     if (!matches.length) { el.innerHTML = '<div class="empty">No matches yet. Check back after new jobs are posted!</div>'; return; }
-
     const cards = await Promise.all(matches.map(async m => {
       let job = null;
       try { job = await apiCall('GET', `/jobs/${m.job_id}`); } catch (e) {}
-
       let deliverySection = '';
       try {
         const delivery = await apiCall('GET', `/jobs/${m.job_id}/delivery`);
         if (delivery.status === 'rejected') {
-          deliverySection = `
-            <div class="delivery-box">
-              <h4>Work Submitted — ${statusBadge(delivery.status)}</h4>
-              <p style="font-size:12px;color:var(--red);margin:8px 0">Client requested revisions. Resubmit below.</p>
-              ${deliverForm(m.job_id)}
-            </div>`;
+          deliverySection = `<div class="delivery-box"><h4>Work Submitted — ${statusBadge(delivery.status)}</h4><p style="font-size:12px;color:var(--red);margin:8px 0">Client requested revisions. Resubmit below.</p>${deliverForm(m.job_id)}</div>`;
         } else {
-          deliverySection = `
-            <div class="delivery-box">
-              <h4>Work Submitted — ${statusBadge(delivery.status)}</h4>
-              <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">${delivery.delivery_link}</a>
-              <p style="font-size:12px;color:var(--text2);margin-top:6px">${delivery.status === 'approved' ? '✅ Payment released to your M-Pesa!' : '⏳ Waiting for client review...'}</p>
-            </div>`;
+          deliverySection = `<div class="delivery-box"><h4>Work Submitted — ${statusBadge(delivery.status)}</h4><a class="delivery-link" href="${delivery.delivery_link}" target="_blank">${delivery.delivery_link}</a><p style="font-size:12px;color:var(--text2);margin-top:6px">${delivery.status === 'approved' ? '✅ Payment released to your M-Pesa!' : '⏳ Waiting for client review...'}</p></div>`;
         }
       } catch (e) {
         const jobStatus = job ? job.status : '';
         if (jobStatus === 'in_progress') {
-          deliverySection = `
-            <div class="delivery-box">
-              <h4>Submit Your Work</h4>
-              <p style="font-size:12px;color:var(--green);margin-bottom:10px">You've been hired! Submit your completed work below.</p>
-              ${deliverForm(m.job_id)}
-            </div>`;
+          deliverySection = `<div class="delivery-box"><h4>Submit Your Work</h4><p style="font-size:12px;color:var(--green);margin-bottom:10px">You've been hired! Submit your completed work below.</p>${deliverForm(m.job_id)}</div>`;
         } else if (jobStatus === 'open') {
           deliverySection = `<p style="font-size:12px;color:var(--text2);margin-top:8px">⏳ Waiting for client to fund escrow...</p>`;
         }
       }
-
-      return `
-        <div class="card" style="margin-bottom:16px">
-          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
-            <h3>${job ? job.title : 'Job #' + m.job_id}</h3>
-            <span style="font-size:18px;font-weight:700;color:var(--accent2)">${(m.score * 100).toFixed(0)}%</span>
-          </div>
-          ${job ? `<p style="font-size:13px;color:var(--text2);margin-bottom:8px">KES ${Number(job.budget).toLocaleString()} · ${statusBadge(job.status)}</p>` : ''}
-          <div class="match-score-bar" style="margin-bottom:12px"><div class="match-score-fill" style="width:${m.score * 100}%"></div></div>
-          ${job && job.status === 'open' ? `<button class="btn btn-secondary btn-sm" onclick="applyToJob(${m.job_id}, this)" style="margin-bottom:12px">Apply Now</button>` : ''}
-          ${deliverySection}
-        </div>`;
+      return `<div class="card" style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
+          <h3>${job ? job.title : 'Job #' + m.job_id}</h3>
+          <span style="font-size:18px;font-weight:700;color:var(--accent2)">${(m.score * 100).toFixed(0)}%</span>
+        </div>
+        ${job ? `<p style="font-size:13px;color:var(--text2);margin-bottom:8px">KES ${Number(job.budget).toLocaleString()} · ${statusBadge(job.status)}</p>` : ''}
+        <div class="match-score-bar" style="margin-bottom:12px"><div class="match-score-fill" style="width:${m.score * 100}%"></div></div>
+        ${job && job.status === 'open' ? `<button class="btn btn-secondary btn-sm" onclick="applyToJob(${m.job_id}, this)" style="margin-bottom:12px">Apply Now</button>` : ''}
+        ${deliverySection}
+      </div>`;
     }));
-
     el.innerHTML = cards.join('');
   } catch (e) { el.innerHTML = `<div class="empty">❌ ${e.message}</div>`; }
 }
@@ -833,7 +941,6 @@ async function loadMyApplications() {
   try {
     const [jobs] = await Promise.all([apiCall('GET', '/jobs')]);
     if (!jobs.length) { el.innerHTML = '<div class="empty">No jobs on platform yet</div>'; return; }
-
     const matchChecks = await Promise.all(jobs.map(async j => {
       try {
         const data = await apiCall('GET', `/jobs/${j.id}/applications`);
@@ -841,74 +948,40 @@ async function loadMyApplications() {
         return mine ? { job: j, match: mine } : null;
       } catch (e) { return null; }
     }));
-
     const applied = matchChecks.filter(Boolean);
-    if (!applied.length) {
-      el.innerHTML = '<div class="empty">You haven\'t applied to any jobs yet. Go to Browse Jobs!</div>';
-      return;
-    }
-
+    if (!applied.length) { el.innerHTML = '<div class="empty">You haven\'t applied to any jobs yet. Go to Browse Jobs!</div>'; return; }
     const order = { in_progress: 0, open: 1, completed: 2 };
     applied.sort((a, b) => (order[a.job.status] ?? 9) - (order[b.job.status] ?? 9));
-
     const cards = await Promise.all(applied.map(async ({ job: j, match: myMatch }) => {
       let deliverySection = '';
       try {
         const delivery = await apiCall('GET', `/jobs/${j.id}/delivery`);
         if (delivery.freelancer_id === currentUser.id) {
           if (delivery.status === 'rejected') {
-            deliverySection = `
-              <div class="delivery-box">
-                <h4>Work Submitted — ${statusBadge(delivery.status)}</h4>
-                <p style="font-size:12px;color:var(--red);margin:8px 0">Client requested revisions. Resubmit below.</p>
-                ${deliverForm(j.id)}
-              </div>`;
+            deliverySection = `<div class="delivery-box"><h4>Work Submitted — ${statusBadge(delivery.status)}</h4><p style="font-size:12px;color:var(--red);margin:8px 0">Client requested revisions. Resubmit below.</p>${deliverForm(j.id)}</div>`;
           } else {
-            deliverySection = `
-              <div class="delivery-box">
-                <h4>Work Submitted — ${statusBadge(delivery.status)}</h4>
-                <a class="delivery-link" href="${delivery.delivery_link}" target="_blank">${delivery.delivery_link}</a>
-                <p style="font-size:12px;color:var(--text2);margin-top:6px">${delivery.status === 'approved' ? '✅ Payment released to your M-Pesa!' : '⏳ Waiting for client to approve...'}</p>
-              </div>`;
+            deliverySection = `<div class="delivery-box"><h4>Work Submitted — ${statusBadge(delivery.status)}</h4><a class="delivery-link" href="${delivery.delivery_link}" target="_blank">${delivery.delivery_link}</a><p style="font-size:12px;color:var(--text2);margin-top:6px">${delivery.status === 'approved' ? '✅ Payment released to your M-Pesa!' : '⏳ Waiting for client to approve...'}</p></div>`;
           }
         }
       } catch (e) {
         if (j.status === 'in_progress') {
-          deliverySection = `
-            <div class="delivery-box">
-              <h4>Submit Your Work</h4>
-              <p style="font-size:12px;color:var(--green);margin-bottom:10px">You've been hired! Submit your completed work below.</p>
-              ${deliverForm(j.id)}
-            </div>`;
+          deliverySection = `<div class="delivery-box"><h4>Submit Your Work</h4><p style="font-size:12px;color:var(--green);margin-bottom:10px">You've been hired! Submit your completed work below.</p>${deliverForm(j.id)}</div>`;
         } else if (j.status === 'open') {
           deliverySection = `<p style="font-size:12px;color:var(--text2);margin-top:8px">⏳ Waiting for client to fund escrow and confirm you...</p>`;
         }
       }
-
-      return `
-        <div class="card" style="margin-bottom:16px">
-          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
-            <div>
-              <h3>#${j.id} — ${j.title}</h3>
-              <p style="font-size:13px;color:var(--text2);margin-top:4px">${j.description || ''}</p>
-            </div>
-            ${statusBadge(j.status)}
-          </div>
-          <p style="font-size:13px;color:var(--text2);margin-bottom:10px">
-            KES ${Number(j.budget).toLocaleString()}
-            · Match Score: <strong style="color:var(--accent2)">${(myMatch.score * 100).toFixed(0)}%</strong>
-          </p>
-          <div class="match-score-bar" style="margin-bottom:12px">
-            <div class="match-score-fill" style="width:${myMatch.score * 100}%"></div>
-          </div>
-          ${deliverySection}
-        </div>`;
+      return `<div class="card" style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
+          <div><h3>#${j.id} — ${j.title}</h3><p style="font-size:13px;color:var(--text2);margin-top:4px">${j.description || ''}</p></div>
+          ${statusBadge(j.status)}
+        </div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:10px">KES ${Number(j.budget).toLocaleString()} · Match Score: <strong style="color:var(--accent2)">${(myMatch.score * 100).toFixed(0)}%</strong></p>
+        <div class="match-score-bar" style="margin-bottom:12px"><div class="match-score-fill" style="width:${myMatch.score * 100}%"></div></div>
+        ${deliverySection}
+      </div>`;
     }));
-
     el.innerHTML = cards.join('');
-  } catch (e) {
-    el.innerHTML = `<div class="empty">❌ ${e.message}</div>`;
-  }
+  } catch (e) { el.innerHTML = `<div class="empty">❌ ${e.message}</div>`; }
 }
 
 async function loadBrowseJobs() {
@@ -923,18 +996,14 @@ async function loadBrowseJobs() {
           <div>
             <h3>#${j.id} — ${j.title}</h3>
             <p style="font-size:13px;color:var(--text2);margin:6px 0">${j.description || 'No description'}</p>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
-              ${parseSkills(j.skills_required).map(s => `<span class="skill-tag">${s}</span>`).join('')}
-            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${parseSkills(j.skills_required).map(s => `<span class="skill-tag">${s}</span>`).join('')}</div>
           </div>
           <div style="text-align:right;flex-shrink:0;margin-left:16px">
             <div style="font-size:18px;font-weight:700;color:var(--accent2)">KES ${Number(j.budget).toLocaleString()}</div>
             ${statusBadge(j.status)}
           </div>
         </div>
-        <div style="margin-top:14px">
-          <button class="btn btn-secondary btn-sm" id="apply-btn-${j.id}" onclick="applyToJob(${j.id}, this)">Apply Now</button>
-        </div>
+        <div style="margin-top:14px"><button class="btn btn-secondary btn-sm" id="apply-btn-${j.id}" onclick="applyToJob(${j.id}, this)">Apply Now</button></div>
       </div>`).join('');
   } catch (e) { el.innerHTML = `<div class="empty">❌ ${e.message}</div>`; }
 }
@@ -975,27 +1044,14 @@ async function deliverWork(job_id, btnEl) {
   const box = btnEl.closest('.delivery-box');
   const linkEl = box ? box.querySelector('.deliver-link') : null;
   const msgEl  = box ? box.querySelector('.deliver-msg') : null;
-  const btn    = btnEl;
-
-  if (!linkEl || !msgEl) {
-    alert('❌ Form not found. Please refresh the page and try again.');
-    return;
-  }
-
+  if (!linkEl || !msgEl) { alert('❌ Form not found. Please refresh the page and try again.'); return; }
   const link    = linkEl.value.trim();
   const message = msgEl.value.trim();
-
   if (!link)    { alert('Please paste your work link (Google Drive, GitHub, Figma, etc)'); return; }
   if (!message) { alert('Please write a short message to the client'); return; }
-
-  if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
-
+  if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'Submitting...'; }
   try {
-    await apiCall('POST', `/jobs/${job_id}/deliver`, {
-      freelancer_id: currentUser.id,
-      delivery_link: link,
-      message: message,
-    });
+    await apiCall('POST', `/jobs/${job_id}/deliver`, { freelancer_id: currentUser.id, delivery_link: link, message: message });
     alert('✅ Work submitted successfully!\n\nThe client has been notified via SMS.\nThey will review and release payment once approved.');
     const activePage = document.querySelector('.page.active');
     if (activePage) {
@@ -1005,7 +1061,7 @@ async function deliverWork(job_id, btnEl) {
     }
   } catch (e) {
     alert(`❌ Submission failed: ${e.message}`);
-    if (btn) { btn.disabled = false; btn.textContent = 'Submit Work'; }
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = 'Submit Work'; }
   }
 }
 
@@ -1040,6 +1096,190 @@ function filterFreelancers() {
   }));
 }
 
+// ── AI Tools ──────────────────────────────────────────────────────────────────
+
+function switchAITab(panel, btn) {
+  document.querySelectorAll('.ai-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.ai-feature-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('ai-panel-' + panel).style.display = '';
+  btn.classList.add('active');
+}
+
+async function loadAIPage() {
+  try {
+    const [jobs, users] = await Promise.all([apiCall('GET', '/jobs'), apiCall('GET', '/users')]);
+    _allJobs = jobs;
+    _allFreelancers = users.filter(u => u.role === 'freelancer');
+
+    const jobOpts = '<option value="">— Select a job —</option>' +
+      jobs.map(j => `<option value="${j.id}" data-skills="${(Array.isArray(j.skills_required) ? j.skills_required : (j.skills_required||'').split(',')).join(',')}" data-desc="${(j.description||'').replace(/"/g,'&quot;')}" data-budget="${j.budget}">#${j.id} — ${j.title}</option>`).join('');
+    document.getElementById('ai-match-job').innerHTML = jobOpts;
+
+    const flOpts = '<option value="">— Select a freelancer —</option>' +
+      _allFreelancers.map(f => `<option value="${f.id}">${f.name} (${f.location||'?'})</option>`).join('');
+    document.getElementById('ai-match-freelancer').innerHTML = flOpts;
+    document.getElementById('ai-trust-freelancer').innerHTML = flOpts;
+
+    if (currentUser && currentUser.role === 'freelancer') {
+      document.getElementById('ai-coach-name').value = currentUser.name || '';
+      document.getElementById('ai-coach-skills').value = (currentUser.skills || []).join(', ');
+      document.getElementById('ai-coach-exp').value = currentUser.experience || 'intermediate';
+      document.getElementById('ai-coach-location').value = currentUser.location || '';
+      document.getElementById('ai-coach-applied').value = currentUser.jobs_applied || 0;
+      document.getElementById('ai-coach-completed').value = currentUser.jobs_completed || 0;
+    }
+  } catch (e) {
+    console.error('[AI] Failed to load data:', e);
+  }
+}
+
+function loadMatchJobPreview() {
+  const sel = document.getElementById('ai-match-job');
+  const opt = sel.options[sel.selectedIndex];
+  const preview = document.getElementById('ai-match-job-preview');
+  if (!opt || !opt.value) { preview.textContent = ''; return; }
+  const skills = opt.getAttribute('data-skills');
+  const budget = opt.getAttribute('data-budget');
+  preview.textContent = `Skills: ${skills || '—'} · Budget: KES ${Number(budget||0).toLocaleString()}`;
+}
+
+function showThinking(containerId, outputId) {
+  document.getElementById(containerId).style.display = 'block';
+  document.getElementById(outputId).innerHTML = `
+    <div class="ai-thinking">
+      <div class="ai-thinking-dots"><span></span><span></span><span></span></div>
+      Claude is analyzing...
+    </div>`;
+}
+
+function formatAIOutput(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^- /gm, '• ')
+    .replace(/\n/g, '<br>');
+}
+
+async function callAI(endpoint, body, resultId, outputId, btnId, originalLabel) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = true;
+  btn.textContent = 'Thinking...';
+  showThinking(resultId, outputId);
+  try {
+    const resp = await fetch(`${AI_API}/${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || 'AI request failed');
+    document.getElementById(outputId).innerHTML = formatAIOutput(data.result);
+    return data;
+  } catch (e) {
+    document.getElementById(outputId).innerHTML = `<span style="color:var(--red)">❌ ${e.message}</span>`;
+    throw e;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+}
+
+async function runImproveJob() {
+  const body = {
+    title: document.getElementById('ai-job-title').value.trim(),
+    description: document.getElementById('ai-job-desc').value.trim(),
+    skills_required: document.getElementById('ai-job-skills').value.trim(),
+    budget: parseFloat(document.getElementById('ai-job-budget').value) || null,
+    client_name: currentUser ? currentUser.name : 'Client',
+  };
+  if (!body.title || !body.description) { alert('Please fill in at least the job title and description'); return; }
+  await callAI('improve-job', body, 'ai-improve-result', 'ai-improve-output', 'ai-improve-btn', '✨ Improve Job Posting');
+}
+
+async function runProfileCoach() {
+  const skillsRaw = document.getElementById('ai-coach-skills').value;
+  const body = {
+    name: document.getElementById('ai-coach-name').value.trim() || 'Freelancer',
+    skills: skillsRaw.split(',').map(s => s.trim()).filter(Boolean),
+    experience: document.getElementById('ai-coach-exp').value,
+    location: document.getElementById('ai-coach-location').value.trim() || 'Kenya',
+    jobs_applied: parseInt(document.getElementById('ai-coach-applied').value) || 0,
+    jobs_completed: parseInt(document.getElementById('ai-coach-completed').value) || 0,
+  };
+  await callAI('coach-profile', body, 'ai-coach-result', 'ai-coach-output', 'ai-coach-btn', '✨ Get Coaching');
+}
+
+async function runMatchExplainer() {
+  const jobId = parseInt(document.getElementById('ai-match-job').value);
+  const flId = parseInt(document.getElementById('ai-match-freelancer').value);
+  if (!jobId || !flId) { alert('Please select both a job and a freelancer'); return; }
+  const job = _allJobs.find(j => j.id === jobId);
+  const fl = _allFreelancers.find(f => f.id === flId);
+  if (!job || !fl) { alert('Could not load job or freelancer data'); return; }
+  const skills = Array.isArray(fl.skills) ? fl.skills : (fl.skills||'').split(',');
+  const jobSkills = Array.isArray(job.skills_required) ? job.skills_required : (job.skills_required||'').split(',');
+  const body = {
+    job_title: job.title,
+    job_description: job.description || '',
+    job_skills: jobSkills.map(s => s.trim()).filter(Boolean),
+    job_budget: parseFloat(job.budget) || 0,
+    freelancer_name: fl.name,
+    freelancer_skills: skills.map(s => s.trim()).filter(Boolean),
+    freelancer_experience: fl.experience || 'intermediate',
+    freelancer_completion_rate: fl.jobs_applied > 0 ? fl.jobs_completed / fl.jobs_applied : null,
+  };
+  await callAI('explain-match', body, 'ai-match-result', 'ai-match-output', 'ai-match-btn', '✨ Explain This Match');
+}
+
+async function runTrustScore() {
+  const id = parseInt(document.getElementById('ai-trust-freelancer').value);
+  if (!id) { alert('Please select a freelancer'); return; }
+  const f = _allFreelancers.find(x => x.id === id);
+  if (!f) { alert('Freelancer not found'); return; }
+  const reviewsRaw = document.getElementById('ai-trust-reviews').value;
+  const reviews = reviewsRaw.split('\n').map(r => r.trim()).filter(Boolean);
+  const skills = Array.isArray(f.skills) ? f.skills : (f.skills||'').split(',');
+  const body = {
+    name: f.name,
+    jobs_applied: f.jobs_applied || 0,
+    jobs_completed: f.jobs_completed || 0,
+    experience: f.experience || 'intermediate',
+    location: f.location || 'Kenya',
+    skills: skills.map(s => s.trim()).filter(Boolean),
+    reviews: reviews,
+  };
+  const data = await callAI('trust-score', body, 'ai-trust-result', 'ai-trust-output', 'ai-trust-btn', '✨ Generate TrustScore Report');
+  if (data && data.trust_label) {
+    const colorMap = {
+      'Highly Trusted': 'background:rgba(16,185,129,0.15);color:#10b981',
+      'Trusted': 'background:rgba(59,130,246,0.15);color:#3b82f6',
+      'Use With Caution': 'background:rgba(245,158,11,0.15);color:#f59e0b',
+      'Not Recommended': 'background:rgba(239,68,68,0.15);color:#ef4444',
+    };
+    const style = colorMap[data.trust_label] || 'background:rgba(148,148,176,0.1);color:#9898b0';
+    const badge = document.getElementById('ai-trust-badge');
+    badge.style.display = 'block';
+    const inner = document.getElementById('ai-trust-badge-inner');
+    inner.setAttribute('style', `display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;${style}`);
+    inner.textContent = `${data.trust_label} · ${data.completion_rate}% completion`;
+  }
+}
+
+async function runReviewAnalysis() {
+  const reviewsRaw = document.getElementById('ai-review-text').value;
+  const reviews = reviewsRaw.split('\n').map(r => r.trim()).filter(Boolean);
+  if (reviews.length < 2) { alert('Please enter at least 2 reviews (one per line)'); return; }
+  const rateRaw = parseFloat(document.getElementById('ai-review-rate').value);
+  const body = {
+    freelancer_name: document.getElementById('ai-review-name').value.trim() || 'Freelancer',
+    reviews: reviews,
+    current_completion_rate: rateRaw ? rateRaw / 100 : null,
+    current_trust_label: document.getElementById('ai-review-label').value,
+  };
+  await callAI('analyze-reviews', body, 'ai-review-result', 'ai-review-output', 'ai-review-btn', '✨ Analyze Reviews');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+
 try {
   const saved = localStorage.getItem('trustgig_user');
   if (saved) { currentUser = JSON.parse(saved); initApp(); }
@@ -1047,7 +1287,6 @@ try {
   localStorage.removeItem('trustgig_user');
 }
 
-// ── Theme toggle ───────────────────────────────────────────────────────────────
 function _applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   const icon = theme === 'light' ? '☀️' : '🌙';
@@ -1064,7 +1303,6 @@ function toggleTheme() {
   localStorage.setItem('tg_theme', next);
 }
 
-// Restore saved theme on load
 _applyTheme(localStorage.getItem('tg_theme') || 'dark');
 </script>
 </body>

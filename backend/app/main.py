@@ -30,10 +30,8 @@ app = FastAPI(
     version="3.0.0",
 )
 
-
-# TODO (teammate): uncomment these two lines when ai_routes package is complete
-# from ai_routes import router as ai_router
-# app.include_router(ai_router, prefix="/ai", tags=["AI Features"])
+from ai_routes import router as ai_router
+app.include_router(ai_router, prefix="/ai", tags=["AI Features"])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
