@@ -2,59 +2,58 @@
 ai_routes/ai_features.py
 ========================
 Five AI-powered features for the TrustGig platform.
-All use the Anthropic Claude API for reasoning and explanations.
-
-Endpoints:
-    POST /ai/improve-job        — Rewrite + enhance a job posting
-    POST /ai/coach-profile      — Freelancer profile coaching
-    POST /ai/explain-match      — Human-readable match explanation + score
-    POST /ai/trust-score        — TrustScore explanation from history
-    POST /ai/analyze-reviews    — Review/dispute pattern analysis
-
-Usage (add to backend/app/main.py):
-    from ai_routes import router as ai_router
-    app.include_router(ai_router, prefix="/ai", tags=["AI Features"])
+Now using OpenAI instead of Anthropic Claude.
 """
 
 import os
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
-import httpx
+import openai
+from openai import AsyncOpenAI
 
 router = APIRouter()
 
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages"
-MODEL = "claude-sonnet-4-20250514"
+# ====================== CONFIG ======================
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    print("WARNING: OPENAI_API_KEY is not set in environment variables.")
+
+# Recommended models:
+# - "gpt-4o-mini"     → Best balance (fast + cheap + smart) ← DEFAULT
+# - "gpt-4o"          → Highest quality (more expensive)
+# - "gpt-4-turbo"     → Good alternative
+MODEL = "gpt-4o-mini"
+
+client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
 
-async def call_claude(prompt: str, max_tokens: int = 1000) -> str:
-    """Call the Anthropic API and return the text response."""
-    if not ANTHROPIC_API_KEY:
+async def call_openai(prompt: str, max_tokens: int = 1000) -> str:
+    """Call OpenAI and return the text response."""
+    if not OPENAI_API_KEY:
         raise HTTPException(
             status_code=503,
-            detail="ANTHROPIC_API_KEY not configured. Add it to your .env file.",
+            detail="OPENAI_API_KEY not configured. Add it to your .env file.",
         )
-    headers = {
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-    }
-    body = {
-        "model": MODEL,
-        "max_tokens": max_tokens,
-        "messages": [{"role": "user", "content": prompt}],
-    }
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        resp = await client.post(ANTHROPIC_API_URL, headers=headers, json=body)
-        if resp.status_code != 200:
-            raise HTTPException(
-                status_code=resp.status_code,
-                detail=f"Claude API error: {resp.text}",
-            )
-        data = resp.json()
-        return data["content"][0]["text"]
+
+    try:
+        response = await client.chat.completions.create(
+            model=MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=max_tokens,
+            temperature=0.7,
+        )
+        return response.choices[0].message.content.strip()
+
+    except openai.RateLimitError:
+        raise HTTPException(status_code=429, detail="OpenAI rate limit exceeded. Please try again later.")
+    except openai.AuthenticationError:
+        raise HTTPException(status_code=401, detail="Invalid OpenAI API key.")
+    except Exception as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"OpenAI API error: {str(e)}"
+        )
 
 
 # ── 1. Job Posting Improvement ────────────────────────────────────────────────
@@ -69,10 +68,7 @@ class ImproveJobRequest(BaseModel):
 
 @router.post("/improve-job")
 async def improve_job_posting(req: ImproveJobRequest):
-    """
-    Rewrite the job description clearly, suggest deliverables,
-    refine required skills, and validate/recommend budget.
-    """
+    """Rewrite and enhance a job posting."""
     prompt = f"""You are an expert job posting consultant for TrustGig, a Kenyan freelance marketplace.
 
 A client named "{req.client_name}" has submitted this job posting:
@@ -103,7 +99,7 @@ Rewrite and improve this posting. Return your response in this EXACT structure w
 
 Keep the tone professional but friendly. All amounts in KES."""
 
-    result = await call_claude(prompt, max_tokens=800)
+    result = await call_openai(prompt, max_tokens=800)
     return {"feature": "job_improvement", "result": result}
 
 
@@ -121,17 +117,14 @@ class CoachProfileRequest(BaseModel):
 
 @router.post("/coach-profile")
 async def coach_profile(req: CoachProfileRequest):
-    """
-    Analyse a freelancer's profile and provide actionable recommendations
-    to improve their match likelihood and win rate.
-    """
+    """Analyse freelancer profile and give actionable coaching."""
     completion_rate = (
         round((req.jobs_completed / req.jobs_applied) * 100)
         if req.jobs_applied > 0 else 0
     )
     recent = ", ".join(req.recent_jobs) if req.recent_jobs else "None listed"
 
-    prompt = f"""You are a career coach for TrustGig, a Kenyan freelance marketplace that uses AI to match freelancers with jobs.
+    prompt = f"""You are a career coach for TrustGig, a Kenyan freelance marketplace.
 
 Freelancer profile:
 - Name: {req.name}
@@ -163,7 +156,7 @@ Provide coaching in this EXACT structure:
 
 Be direct, specific, and encouraging. Use plain English. Keep it under 300 words total."""
 
-    result = await call_claude(prompt, max_tokens=600)
+    result = await call_openai(prompt, max_tokens=600)
     return {"feature": "profile_coaching", "result": result, "completion_rate": completion_rate}
 
 
@@ -184,10 +177,7 @@ class ExplainMatchRequest(BaseModel):
 
 @router.post("/explain-match")
 async def explain_match(req: ExplainMatchRequest):
-    """
-    Explain in natural language why a freelancer matches a job.
-    Returns an AI-generated score (0-100) and human-readable reasoning.
-    """
+    """Explain why a freelancer matches (or doesn't match) a job."""
     score_hint = ""
     if req.final_score is not None:
         score_hint = f"The system's computed match score is {round(req.final_score * 100)}%."
@@ -223,7 +213,7 @@ Provide a match analysis in this EXACT structure:
 
 Be honest and specific. Use the freelancer's actual skills in your analysis."""
 
-    result = await call_claude(prompt, max_tokens=400)
+    result = await call_openai(prompt, max_tokens=400)
     return {"feature": "match_explanation", "result": result}
 
 
@@ -242,10 +232,7 @@ class TrustScoreRequest(BaseModel):
 
 @router.post("/trust-score")
 async def trust_score_explanation(req: TrustScoreRequest):
-    """
-    Generate a readable TrustScore summary explaining reliability
-    and potential risks based on freelancer history.
-    """
+    """Generate TrustScore explanation."""
     completion_rate = (
         round((req.jobs_completed / req.jobs_applied) * 100)
         if req.jobs_applied > 0 else 0
@@ -266,8 +253,7 @@ async def trust_score_explanation(req: TrustScoreRequest):
         else "Recency unknown"
     )
     reviews_text = (
-        "\n".join(f"- {r}" for r in req.reviews)
-        if req.reviews else "No reviews available"
+        "\n".join(f"- {r}" for r in req.reviews) if req.reviews else "No reviews available"
     )
 
     prompt = f"""You are TrustGig's reliability analyst. Write a TrustScore report for a client considering hiring this freelancer.
@@ -303,7 +289,7 @@ Write a TrustScore report in this EXACT structure:
 
 Write in plain, professional English. Under 250 words total."""
 
-    result = await call_claude(prompt, max_tokens=500)
+    result = await call_openai(prompt, max_tokens=500)
     return {
         "feature": "trust_score",
         "result": result,
@@ -323,10 +309,7 @@ class ReviewAnalysisRequest(BaseModel):
 
 @router.post("/analyze-reviews")
 async def analyze_reviews(req: ReviewAnalysisRequest):
-    """
-    Detect patterns across client reviews (late delivery, communication,
-    exceptional performance) and suggest TrustScore adjustments.
-    """
+    """Analyze patterns in reviews and suggest TrustScore adjustments."""
     if not req.reviews:
         raise HTTPException(status_code=400, detail="At least one review is required")
 
@@ -366,5 +349,5 @@ Positive: [X]% | Neutral: [X]% | Negative: [X]%
 
 Be objective and specific. Reference actual phrases from the reviews."""
 
-    result = await call_claude(prompt, max_tokens=600)
+    result = await call_openai(prompt, max_tokens=600)
     return {"feature": "review_analysis", "result": result}
