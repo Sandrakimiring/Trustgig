@@ -1,332 +1,183 @@
-# Trustgig
+# TrustGig
 
-<p align="center">
-    <em>An AI-powered gig worker verification and matching platform combining machine learning with SMS integration.</em>
-</p>
+**AI-assisted freelance marketplace for Kenya** — semantic job-to-freelancer matching (sentence embeddings + FAISS), SMS notifications (Africa’s Talking), escrow-style job flow, M-Pesa disbursement hooks, and OpenAI-powered coaching and explanations.
 
 ---
 
-## Overview
+## Live demo
 
-Trustgig is a data science and backend application designed to verify and match gig workers with opportunities. It leverages modern machine learning techniques (sentence transformers, FAISS embeddings) combined with a FastAPI backend to provide intelligent worker-to-opportunity matching. The platform integrates with Africa's Talking for SMS communication and OpenAI for enhanced AI capabilities.
+**Frontend (production):** [https://trustgig-frontend.onrender.com/](https://trustgig-frontend.onrender.com/)
 
-**Tech Stack:**
-- **Backend:** FastAPI, SQLAlchemy, PostgreSQL
-- **ML/Embeddings:** Sentence Transformers, FAISS, PyTorch, scikit-learn
-- **SMS:** Africa's Talking API
-- **AI:** OpenAI Integration
-- **Frontend:** HTML (39.5% of codebase)
-- **Python:** 58.2% of codebase
+Open the app in your browser to explore the client and freelancer flows against the deployed backend services.
+
+---
+
+## Walkthrough videos (Loom)
+
+Recorded as **separate sessions** (not a single split-screen run). In an ideal demo, **client and freelancer would run side by side** — e.g. client posts a gig while a freelancer applies — so you can follow the full loop in real time.
+
+| Flow | Link | Notes |
+|------|------|--------|
+| **Client** | [Watch on Loom — client walkthrough](https://www.loom.com/share/46138c37800c403692d95fd848ea810e?utm_medium=gif) | Shows posting and client-side usage |
+| **Freelancer** | [Watch on Loom — freelancer walkthrough](https://www.loom.com/share/31a80e3c436d4c4fb89a81768dc94353) | **Older UI** in this recording; behavior is the same idea, but the **current** live site matches the polished frontend linked above |
+
+---
+
+## What’s in this repo
+
+| Piece | Role |
+|--------|------|
+| **`frontend/`** | Single-page HTML/CSS/JS client (dark/light theme, client vs freelancer views) |
+| **`backend/app/`** | Main **FastAPI** API: auth, jobs, applications, escrow, deliveries, SMS triggers; calls the matcher over HTTP |
+| **`trustgig/`** | **Matching microservice**: `SentenceTransformer` + **FAISS** retrieval, reliability + budget scoring (`matcher.py`, `scorer.py`, `embedder.py`) |
+| **`backend/app/ai_routes/`** | **`/ai`** routes: OpenAI (`gpt-4o-mini`) for job rewrites, profile coaching, match explanations, trust narratives, review analysis |
+
+Deployed setup (see comments in `backend/app/main.py`) commonly splits:
+
+- **Frontend** — static host (e.g. Render)  
+- **Platform API** — backend service  
+- **Matcher** — ML service URL configured via `MATCHER_SERVICE_URL`
 
 ---
 
 ## Features
 
-✨ **Core Capabilities:**
-- **Intelligent Matching:** Uses sentence transformers and FAISS to semantically match workers with opportunities
-- **Worker Verification:** AI-powered verification system for gig workers
-- **SMS Integration:** SMS-based communication via Africa's Talking
-- **FastAPI Backend:** High-performance async API for real-time matching
-- **Database Support:** PostgreSQL with SQLAlchemy ORM for reliable data persistence
-- **ML Pipeline:** Complete pipeline from data processing to model inference
-- **AI Enhancement:** OpenAI integration for advanced capabilities
+- **Semantic matching** — `all-MiniLM-L6-v2` embeddings, FAISS top-K search, then weighted score (skill fit, completion/reliancy, budget fit).
+- **Job lifecycle** — open → fund escrow / assign freelancer → deliver → approve or reject → completion and payment notification paths.
+- **SMS** — match alerts, application notices, escrow and delivery messages (Africa’s Talking).
+- **Payments** — M-Pesa disbursement helpers on approval/release paths (configure sandbox/production credentials).
+- **AI helpers** — optional OpenAI features under **`/ai`** (requires `OPENAI_API_KEY`).
 
 ---
 
-## Project Organization
+## Tech stack
 
-```
-├── LICENSE                    <- Open-source license
-├── Makefile                   <- Convenience commands (make data, make train, etc.)
-├── README.md                  <- Project documentation
-│
-├── data/                      <- Data directory (organized by processing stage)
-│   ├── raw/                   <- Original immutable data
-│   ├── interim/               <- Intermediate transformed data
-│   ├── processed/             <- Final datasets for modeling
-│   └── external/              <- Third-party data
-│
-├── docs/                      <- MkDocs project for documentation
-│
-├── models/                    <- Trained models and model artifacts
-│
-├── reports/                   <- Generated analyses and visualizations
-│   └── figures/               <- Generated graphics
-│
-├── frontend/                  <- HTML frontend components
-│
-├── backend/                   <- Backend application code
-│
-├── ai_routes/                 <- AI-specific API routes
-│
-├── trustgig/                  <- Main Python package
-│   ├── __init__.py
-│   ├── config.py              <- Configuration and path variables
-│   ├── dataset.py             <- Data loading and generation scripts
-│   ├── features.py            <- Feature engineering code
-│   ├── plots.py               <- Visualization code
-│   └── modeling/
-│       ├── train.py           <- Model training logic
-│       └── predict.py         <- Model inference code
-│
-├── requirements.txt           <- Python dependencies
-├── pyproject.toml             <- Project metadata and tool configuration
-├── setup.cfg                  <- Flake8 configuration
-│
-├── download_model.py          <- Script to download pre-trained models
-├── migrate.py                 <- Database migration script
-├── seed_data.py               <- Database seeding script
-└── test_*.py                  <- Test files for various components
-```
+- **API:** FastAPI, Uvicorn, HTTPX  
+- **Data:** SQLAlchemy, PostgreSQL (recommended in production) or SQLite for local dev  
+- **ML:** sentence-transformers, FAISS, PyTorch (CPU wheels in `requirements.txt`), scikit-learn  
+- **Integrations:** Africa’s Talking (SMS / payments SDK), OpenAI Python SDK  
+- **Frontend:** Static HTML + vanilla JS (no build step)
 
 ---
 
-## Getting Started
+## Repository layout (actual)
 
-### Prerequisites
-
-- **Python:** 3.9 or higher
-- **pip:** Package manager
-- **Git:** For version control
-- **PostgreSQL:** (Optional) For production database
-
-### Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Sandrakimiring/Trustgig.git
-   cd Trustgig
-   ```
-
-2. **Create a virtual environment:**
-   ```bash
-   python -m venv .venv
-   ```
-
-3. **Activate the virtual environment:**
-   ```bash
-   # On Windows
-   .venv\Scripts\activate
-   
-   # On macOS/Linux
-   source .venv/bin/activate
-   ```
-
-4. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. **Set up environment variables:**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-6. **Download ML models (optional):**
-   ```bash
-   python download_model.py
-   ```
-
-### Quick Start
-
-**Run the development server:**
-```bash
-uvicorn backend.main:app --reload
+```
+├── backend/app/          # Platform API (main.py, models, database, services, ai_routes)
+├── frontend/             # index.html + assets for static hosting
+├── trustgig/             # Matching service package (main.py, embedder, matcher, scorer, models)
+├── docs/                 # MkDocs material
+├── migrate.py            # DB migration helpers
+├── seed_data.py          # Sample data (root + backend variants if present)
+├── download_model.py     # Pre-download embedding model for faster startup
+├── requirements.txt
+├── pyproject.toml
+└── .env.example
 ```
 
-The API will be available at `http://localhost:8000`
-
-**Data processing:**
-```bash
-make data
-```
-
-**Train models:**
-```bash
-make train
-```
+Legacy / supplemental: `backend/app/services/vectorizer.py` (older keyword-style similarity), root `ai_routes/` script-style experiments — not the primary FastAPI AI surface (`backend/app/ai_routes/`).
 
 ---
 
-## Available Commands
+## Quick start (local)
 
-Use the Makefile for common tasks:
+**1. Clone and install**
 
 ```bash
-make create_environment    # Create Python virtual environment
-make requirements           # Install dependencies
-make data                   # Process raw data into datasets
-make train                  # Train ML models
-make lint                   # Run code linting (flake8)
-make format                # Format code with black and isort
-make clean                 # Remove compiled Python files
+git clone https://github.com/Sandrakimiring/Trustgig.git
+cd Trustgig
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate   # macOS / Linux
+pip install -r requirements.txt
+cp .env.example .env          # edit DATABASE_URL, API keys, URLs
 ```
 
----
+**2. Optional: cache the embedding model**
 
-## Key Dependencies
+```bash
+python download_model.py
+```
 
-### Web Framework & API
-- `fastapi` - Modern async web framework
-- `uvicorn` - ASGI server
-- `httpx` - HTTP client
+**3. Run the platform API** (imports assume `backend/app` as the app root)
 
-### Database
-- `sqlalchemy` - ORM and database toolkit
-- `psycopg2-binary` - PostgreSQL adapter
-- `asyncpg` - Async PostgreSQL driver
+```bash
+cd backend/app
+uvicorn main:app --reload --port 8000
+```
 
-### Machine Learning & Embeddings
-- `torch` - Deep learning framework (CPU-only)
-- `sentence-transformers` - Semantic text embeddings
-- `faiss-cpu` - Similarity search and clustering
-- `scikit-learn` - Machine learning utilities
-- `numpy`, `pandas` - Data manipulation
+- API root: [http://localhost:8000](http://localhost:8000)  
+- Interactive docs: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-### Communication
-- `africastalking` - SMS integration
-- `requests` - HTTP requests
+**4. Run the matcher service** (separate terminal, from repo root)
 
-### AI & Utilities
-- `openai` - OpenAI API integration
-- `python-dotenv` - Environment variable management
-- `click` - CLI framework
+```bash
+uvicorn trustgig.main:app --reload --port 8001
+```
 
-For complete dependency list, see `requirements.txt`
+Point the backend at it:
+
+```env
+MATCHER_SERVICE_URL=http://127.0.0.1:8001
+```
+
+**5. Open the frontend**
+
+Serve `frontend/` with any static server (or open `frontend/index.html` with your API base URL configured in the client script as appropriate for local testing).
 
 ---
 
 ## Configuration
 
-Create a `.env` file (see `.env.example` for template):
+Copy [`.env.example`](.env.example) to `.env`. Typical variables:
 
-```bash
-# Database
-DATABASE_URL=postgresql://user:password@localhost/trustgig
-
-# Africa's Talking
-AFRICASTALKING_USERNAME=your_username
-AFRICASTALKING_API_KEY=your_api_key
-
-# OpenAI
-OPENAI_API_KEY=your_openai_key
-
-# Application
-DEBUG=False
-LOG_LEVEL=INFO
-```
-
----
-
-## Development
-
-### Code Quality
-
-The project uses modern Python tooling:
-- **black** - Code formatting (line length: 99)
-- **flake8** - Linting
-- **isort** - Import sorting
-- **pytest** - Testing
-
-### Code Style
-- Line length: 99 characters
-- Python version: 3.9+
-- Tools configured in `pyproject.toml` and `setup.cfg`
-
-### Testing
-
-```bash
-# Run tests
-pytest
-
-# Run specific test file
-pytest test_embedder.py
-
-# Test local endpoints
-python test_endpoint_local.py
-```
+| Variable | Purpose |
+|----------|---------|
+| `DATABASE_URL` | SQLAlchemy URL (SQLite locally, Postgres in production) |
+| `MATCHER_SERVICE_URL` | Base URL of the matching service |
+| `FRONTEND_URL` | Used in SMS links back to the web app |
+| Africa’s Talking (`AT_USERNAME`, `AT_API_KEY`, etc.) | SMS and payment integration |
+| `OPENAI_API_KEY` | `/ai` features |
 
 ---
 
 ## Database
 
-### Migrations
 ```bash
-python migrate.py
-```
-
-### Seeding Sample Data
-```bash
-python seed_data.py
+python migrate.py     # apply additive fixes / compatibility updates
+python seed_data.py   # optional sample users/jobs
 ```
 
 ---
 
-## ML Pipeline
+## ML matching (high level)
 
-The project includes a complete machine learning pipeline:
-
-1. **Data Processing** (`trustgig/dataset.py`)
-   - Loading and cleaning raw data
-   - Data validation and transformation
-
-2. **Feature Engineering** (`trustgig/features.py`)
-   - Creating features for model training
-   - Embedding generation using sentence transformers
-
-3. **Model Training** (`trustgig/modeling/train.py`)
-   - Training matching algorithms
-   - Model evaluation and validation
-
-4. **Inference** (`trustgig/modeling/predict.py`)
-   - Running trained models for worker-opportunity matching
-   - Real-time prediction API endpoints
-
-5. **Embeddings** (`test_embedder.py`)
-   - Semantic similarity testing
-   - FAISS index management
+1. Job skills and budget are sent to **`POST /match`** on the matcher service.  
+2. Freelancer skill text is embedded with **MiniLM**; **FAISS** returns top candidates by cosine similarity (inner product on normalized vectors).  
+3. **Final score** blends vector similarity, reliability (completion rate × recency), and budget fit — see `trustgig/matcher.py` and `trustgig/scorer.py`.
 
 ---
 
-## API Endpoints
+## Testing and scripts
 
-The FastAPI backend provides RESTful endpoints for:
-- Worker profile management
-- Opportunity listings
-- Semantic matching between workers and opportunities
-- SMS communication
-- AI-enhanced insights
+```bash
+pytest
+pytest test_embedder.py
+python test_endpoint_local.py
+```
 
-See `ai_routes/` and `backend/` for endpoint implementations.
+The root **Makefile** may reference optional Cookiecutter-era modules (`trustgig.dataset`, etc.); use the commands above if those entrypoints are missing in your checkout.
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please ensure:
-1. Code follows the black/isort style guide
-2. All tests pass
-3. Linting passes (`make lint`)
-4. Code is properly formatted (`make format`)
+1. Match existing style (Black / isort settings in `pyproject.toml` where applicable).  
+2. Run tests and lint before opening a PR.  
+3. Keep README and `.env.example` in sync when adding services or env vars.
 
 ---
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
-## Support
-
-For questions or issues:
-- Open an issue on GitHub
-- Check existing documentation in the `docs/` folder
-- Review test files for usage examples
-
----
-
-<p><small>Project based on the <a target="_blank" href="https://cookiecutter-data-science.drivendata.org/">Cookiecutter Data Science</a> project template.</small></p>
-```
-This comprehensive README includes:
+MIT — see [LICENSE](LICENSE).
